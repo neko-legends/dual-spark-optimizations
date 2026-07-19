@@ -20,6 +20,15 @@ API with no skill, flag, or model reload.
 
 ![Adaptive profile: near-specialist C1 speed and best measured C4 throughput](results/adaptive-performance.svg)
 
+### Why the adaptive profile matters
+
+The full baseline comparison makes the compromises visible: the dedicated
+`fast` profile wins C1, but cannot run true C4; the pre-adaptive C4 and stage-c
+profiles lose substantial single-request speed in some cases. `adaptive`
+avoids those extremes while accepting concurrent work automatically.
+
+![Full C1 and TTFT comparison, including the weaker specialist tradeoffs](results/benchmark-comparison.svg)
+
 Every profile uses the same uncensored v1.1 weights, tool parser, and reasoning
 parser. Pick the serving profile for the workload:
 
@@ -122,9 +131,8 @@ server delivered the best measured C4 result at all three prompt sizes. Keep
 `fast` only for a deliberately single-request deployment and `long-c4` when
 the full 1M stage-c configuration is required.
 
-The complete table, TTFT values, exact model revision, linked raw JSON, and
-additional [C1/TTFT](results/benchmark-comparison.svg) and
-[specialist](results/concurrency-comparison.svg) views are in
+The complete table, TTFT values, exact model revision, linked raw JSON, and an
+additional [specialist C1/C4 view](results/concurrency-comparison.svg) are in
 [`results/BENCHMARKS.md`](results/BENCHMARKS.md).
 
 ## Prerequisites
@@ -300,14 +308,40 @@ teaming, and local use with user-supplied guardrails. Do not deploy it publicly
 without an application-level safety layer and access controls. Follow the
 model's gate, responsible-use terms, and all applicable laws.
 
-## Credits
-
-This repository exists because of work by drowzeys / keys, Tony Deangelo,
-Rafael Caricio, MiaAI-Lab, the vLLM contributors, NVIDIA's DGX Spark team, and
-the upstream DeepSeek team. Exact links, derived-file scope, and preserved
-licenses are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+## License and artifacts
 
 Software in this repository is MIT licensed unless a file says otherwise.
 Model weights are separately licensed and are not redistributed here.
 Model weights, Hugging Face caches, runtime-image exports, and raw benchmark
 captures are ignored and rejected by the repository artifact guard.
+
+## Credits
+
+This repository combines and benchmarks work from several open-source efforts:
+
+- **drowzeys / Keys** — the gated
+  [uncensored v1.1 Mida/Brikie weights](https://huggingface.co/drowzeys/DeepSeek-V4-Flash-DSpark-Abliterated-Uncensored-v1.1-alpha-Mida-Brikie),
+  [release repository](https://github.com/drowzeys/DeepSeek-V4-Flash-DSpark-Abliterated-Uncensored-1M-57toks),
+  stage-c reference, ragged-batch handling, and stable request/KV-slot work.
+- **Tony Deangelo (`tonyd2wild`)** — the
+  [high-throughput DSpark runtime overlay and two-Spark optimization recipe](https://github.com/tonyd2wild/DeepSeek-v4-Flash-DSpark-60-tok-s-900K-ctx-2x-DGX-Spark)
+  that forms the fast side of the adaptive runtime.
+- **Rafael Caricio** — the original
+  [DSpark vLLM integration PR](https://github.com/rafaelcaricio/vllm/pull/1)
+  and companion
+  [DSpark deployment, benchmark, and runbook PR](https://github.com/rafaelcaricio/spark_vllm_docker/pull/1).
+- **MiaAI-Lab** — the
+  [two-node DGX Spark packaging and worker-first launch runbook](https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark).
+- **[bjk110](https://github.com/bjk110)** — the
+  `ghcr.io/bjk110/vllm-spark` base runtime used by the Tony-derived overlay.
+- **[DeepSeek-AI](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-DSpark),
+  [vLLM](https://github.com/vllm-project/vllm), and
+  [FlashInfer](https://github.com/flashinfer-ai/flashinfer) contributors** —
+  the base model, serving engine, speculative-decoding infrastructure, and
+  optimized kernels on which this work depends.
+- **NVIDIA** — DGX Spark, CUDA/NCCL/RoCE support, and the official
+  [Connect Two Sparks](https://github.com/NVIDIA/dgx-spark-playbooks/tree/main/nvidia/connect-two-sparks)
+  playbook.
+
+Exact derived-file scope and preserved licenses are documented in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
