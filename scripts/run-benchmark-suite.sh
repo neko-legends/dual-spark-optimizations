@@ -20,14 +20,14 @@ cp "$ROOT_DIR/profiles/$PROFILE.env" "$output_dir/profile.env"
 "$SCRIPT_DIR/capture-cluster-state.sh" "$output_dir/before"
 
 telemetry_query='timestamp,temperature.gpu,power.draw,clocks.current.sm,clocks.current.memory,utilization.gpu,memory.used'
-nvidia-smi --query-gpu="$telemetry_query" --format=csv -l 1 >"$output_dir/forge-telemetry.csv" &
-forge_telemetry_pid=$!
-ssh "$WORKER_SSH" nvidia-smi --query-gpu="$telemetry_query" --format=csv -l 1 >"$output_dir/anvil-telemetry.csv" &
-anvil_telemetry_pid=$!
+nvidia-smi --query-gpu="$telemetry_query" --format=csv -l 1 >"$output_dir/head-telemetry.csv" &
+head_telemetry_pid=$!
+ssh "$WORKER_SSH" nvidia-smi --query-gpu="$telemetry_query" --format=csv -l 1 >"$output_dir/worker-telemetry.csv" &
+worker_telemetry_pid=$!
 
 stop_telemetry() {
-  kill "$forge_telemetry_pid" "$anvil_telemetry_pid" 2>/dev/null || true
-  wait "$forge_telemetry_pid" "$anvil_telemetry_pid" 2>/dev/null || true
+  kill "$head_telemetry_pid" "$worker_telemetry_pid" 2>/dev/null || true
+  wait "$head_telemetry_pid" "$worker_telemetry_pid" 2>/dev/null || true
 }
 trap stop_telemetry EXIT INT TERM
 
@@ -60,7 +60,7 @@ for prompt in "$ROOT_DIR"/benchmarks/prompts/book-context-{10k,200k,300k}.txt; d
   run_case "$prompt" 1
 done
 
-if [ "$PROFILE" = agent ] && [ "${FULL_CONCURRENCY:-0}" = 1 ]; then
+if [ "${FULL_CONCURRENCY:-0}" = 1 ]; then
   for prompt in "$ROOT_DIR"/benchmarks/prompts/book-context-{10k,200k,300k}.txt; do
     run_case "$prompt" 4
   done

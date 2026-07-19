@@ -32,19 +32,19 @@ jobs:
           echo '785c5b31d1ce77612431b1289c0a097ed51ab1a6d4a07bccfb7a70f59df55f94  benchmarks/prompts/book-context-10k.txt' | sha256sum -c -
           echo 'a794ca243983eb3387bec6728db4b0c72a99ee2a98cfee7223269708e4ae228c  benchmarks/prompts/book-context-200k.txt' | sha256sum -c -
           echo '5e3a5f9c15da85d938993ef0c80153d26ba405a13689447fd7082d23355ca4ba  benchmarks/prompts/book-context-300k.txt' | sha256sum -c -
-      - name: Render both Compose profiles
+      - name: Render all Compose profiles
         shell: bash
         run: |
           cp .env.example .env
           set -a
           source .env
-          source profiles/fast.env
           set +a
-          export MODEL_DIR=/home/jun/models/test NODE_RANK=0 HEADLESS=
+          export MODEL_DIR=/tmp/models/test NODE_RANK=0 HEADLESS=
           export MASTER_ADDR=10.100.10.1 VLLM_HOST_IP=10.100.10.1
-          export NCCL_SOCKET_IFNAME=enp1s0f0np0 NCCL_IB_HCA=rocep1s0f0 NCCL_IB_GID_INDEX=3
-          docker compose --env-file .env -f docker-compose.dspark.yml config -q
-          set -a
-          source profiles/agent.env
-          set +a
-          docker compose --env-file .env -f docker-compose.dspark.yml config -q
+          export NCCL_SOCKET_IFNAME=eth0 NCCL_IB_HCA=roce0 NCCL_IB_GID_INDEX=3
+          for profile in fast fast-c4 long-c4; do
+            set -a
+            source "profiles/$profile.env"
+            set +a
+            docker compose --env-file .env -f docker-compose.dspark.yml config -q
+          done

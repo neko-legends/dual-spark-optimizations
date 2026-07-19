@@ -20,4 +20,20 @@ if [ "$missing" -ne 0 ]; then
   exit 1
 fi
 
+grep -Fq '_store_main_kv_ragged' \
+  "$CONTEXT_DIR/vllm/models/deepseek_v4/nvidia/dspark.py" || {
+  echo "Missing DSpark ragged-KV concurrency support" >&2
+  exit 1
+}
+grep -Fq 'req_ids: list[str]' \
+  "$CONTEXT_DIR/vllm/v1/spec_decode/dspark_proposer.py" || {
+  echo "Missing DSpark stable request-slot support" >&2
+  exit 1
+}
+grep -Fq 'dspark_propose_kwargs' \
+  "$CONTEXT_DIR/vllm/v1/worker/gpu_model_runner.py" || {
+  echo "Missing DSpark request-ID forwarding" >&2
+  exit 1
+}
+
 echo "Overlay source check passed for $DOCKERFILE"

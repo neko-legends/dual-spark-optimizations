@@ -1,6 +1,6 @@
 # Copilot instructions
 
-Follow the repository-level `AGENTS.md` for topology, safety, validation, and
-benchmark rules. In particular: Forge downloads once, Anvil receives weights
-over the direct CX-7 link, hostnames remain distinct, and upstream performance
-numbers must never be presented as measurements from this repository.
+Follow the repository-level `AGENTS.md` for deployment, safety, validation, and
+benchmark rules. In particular: the head downloads once, the worker receives
+weights over the direct CX-7 link, private deployment identifiers stay out of
+tracked files, and upstream numbers are never presented as local measurements.

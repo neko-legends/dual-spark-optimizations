@@ -34,7 +34,7 @@ free -h
 echo "## tailscale"
 tailscale status 2>&1 || true'
 
-bash -c "$capture" >"$output_dir/forge-state.txt" 2>&1
-ssh "$WORKER_SSH" bash -c "$(printf '%q' "$capture")" >"$output_dir/anvil-state.txt" 2>&1
+bash -c "$capture" >"$output_dir/head-state.txt" 2>&1
+ssh "$WORKER_SSH" bash -c "$(printf '%q' "$capture")" >"$output_dir/worker-state.txt" 2>&1
 
-echo "Captured Forge and Anvil state in $output_dir"
+echo "Captured head and worker state in $output_dir"

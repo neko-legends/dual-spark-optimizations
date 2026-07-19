@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-worker="${1:-jun@10.100.10.2}"
+worker="${1:?usage: $0 USER@WORKER_FABRIC_IP}"
 key="$HOME/.ssh/id_ed25519"
 
 mkdir -p "$HOME/.ssh"

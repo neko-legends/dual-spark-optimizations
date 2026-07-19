@@ -2,7 +2,7 @@
 set -euo pipefail
 
 [ "$(id -u)" -eq 0 ] || { echo "run this script with sudo" >&2; exit 1; }
-target_user="${SUDO_USER:-jun}"
+target_user="${SUDO_USER:?run this script with sudo from the deployment account}"
 id "$target_user" >/dev/null 2>&1 || { echo "user not found: $target_user" >&2; exit 1; }
 
 export DEBIAN_FRONTEND=noninteractive

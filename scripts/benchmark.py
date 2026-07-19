@@ -115,7 +115,7 @@ def main() -> None:
     parser.add_argument("--url", default="http://127.0.0.1:8888/v1/chat/completions")
     parser.add_argument("--model", default="deepseek-v4-flash-dspark-v1.1-abliterated")
     parser.add_argument("--model-revision", default="unknown")
-    parser.add_argument("--profile", choices=("fast", "agent"), default="fast")
+    parser.add_argument("--profile", default="fast")
     parser.add_argument("--prompt-file", type=Path, required=True)
     parser.add_argument("--runs", type=int, default=1, help="sequential groups")
     parser.add_argument("--concurrency", type=int, default=1, help="requests per group")

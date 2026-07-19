@@ -26,7 +26,7 @@
 				"remote_port":	5201
 			}],
 		"version":	"iperf 3.16",
-		"system_info":	"Linux forge 6.17.0-1026-nvidia #26-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 25 00:57:17 UTC 2026 aarch64",
+		"system_info":	"Linux head-node 6.17.0-1026-nvidia #26-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 25 00:57:17 UTC 2026 aarch64",
 		"timestamp":	{
 			"time":	"Sun, 19 Jul 2026 16:27:37 GMT",
 			"timesecs":	1784478457

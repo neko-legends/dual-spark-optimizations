@@ -12,10 +12,15 @@ benchmark matrix whenever one of these revisions changes.
 | Tony fast base image resolved digest | `ghcr.io/bjk110/vllm-spark@sha256:d8492e7677cf1b9aaa3344e0e6865efc468454013eee5ebabac85be90af027be` |
 | drowzeys stage-c image digest | `ghcr.io/drowzeys/vllm-dspark-nvfp4-stage-c@sha256:f3b0577bfec41ac2cece2cbe0c4a9be934d9d4f18c50bbcdd602848da2499fb8` |
 
-At this verification point, `recipe/` and
-`scripts/verify-overlay-sources.sh` are byte-for-byte matches for Tony's
-pinned commit. The measured fast image ID was
+At this verification point, the overlay is based on Tony's pinned commit. Three
+files also carry the ragged-batch/stable-KV-slot concurrency changes from the
+pinned drowzeys stage-c image; see `THIRD_PARTY_NOTICES.md`. The original
+measured fast image ID was
 `sha256:131a0df01260cdeb2292edbe2b1836e5f459b36bfe237197ddff64a9d5758947`;
-the measured agent image ID was
+the measured Tony+C4 image ID was
+`sha256:830c4f7c30f57ac8692676a502087c8589ef4228580b195be76656141470f799`;
+the final C1-preserving combined overlay image ID was
+`sha256:e8df377b28db3bde399d0829ff35cb59ffee6071a953d8ab3b425da65546c4f5`;
+the measured stage-c image ID was
 `sha256:76532c4cc261afe7a7cad1d9731cd5123d0e14219c9a1d35a0ef6163fe67c5d4`.
 The resolved registry digests above make the mutable tags auditable.

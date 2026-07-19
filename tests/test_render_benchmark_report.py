@@ -44,8 +44,8 @@ class RenderBenchmarkReportTests(unittest.TestCase):
         self.assertIn("61.2", svg)
         self.assertIn("61.25", markdown)
         self.assertIn("abc123", markdown)
-        agent_result = reporter.Result(
-            profile="agent",
+        stage_c_result = reporter.Result(
+            profile="long-c4",
             prompt="10K",
             concurrency=4,
             decode_tps=20.0,
@@ -53,11 +53,11 @@ class RenderBenchmarkReportTests(unittest.TestCase):
             ttft=3.0,
             requests=12,
             model_revision="abc123",
-            source="agent/result.json",
+            source="long-c4/result.json",
         )
         self.assertIn(
-            "Agent profile concurrency scaling",
-            reporter.render_concurrency_svg([agent_result]),
+            "C1 and C4 runtime comparison",
+            reporter.render_concurrency_svg([stage_c_result]),
         )
 
     def test_placeholder_is_honest(self):

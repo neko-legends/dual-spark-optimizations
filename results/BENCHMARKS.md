@@ -9,14 +9,20 @@ Decode tok/s is the per-request mean; aggregate tok/s is the group throughput.
 
 | Profile | Prompt | C | Requests | Decode tok/s | Aggregate tok/s | Mean TTFT (s) | Model revision | Source |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
-| `fast` | 10K | 1 | 3 | 36.79 | 30.86 | 2.26 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T172757Z/book-context-10k-c1.json`](raw/fast/20260719T172757Z/book-context-10k-c1.json) |
-| `fast` | 200K | 1 | 3 | 49.88 | 24.52 | 35.50 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T172757Z/book-context-200k-c1.json`](raw/fast/20260719T172757Z/book-context-200k-c1.json) |
-| `fast` | 300K | 1 | 3 | 57.29 | 31.07 | 22.26 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T172757Z/book-context-300k-c1.json`](raw/fast/20260719T172757Z/book-context-300k-c1.json) |
-| `agent` | 10K | 1 | 3 | 35.30 | 33.78 | 0.34 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-10k-c1.json`](raw/agent/20260719T174232Z/book-context-10k-c1.json) |
-| `agent` | 200K | 1 | 3 | 36.94 | 22.94 | 34.06 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-200k-c1.json`](raw/agent/20260719T174232Z/book-context-200k-c1.json) |
-| `agent` | 300K | 1 | 3 | 53.77 | 31.50 | 22.00 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-300k-c1.json`](raw/agent/20260719T174232Z/book-context-300k-c1.json) |
-| `agent` | 10K | 4 | 12 | 19.39 | 60.10 | 3.87 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-10k-c4.json`](raw/agent/20260719T174232Z/book-context-10k-c4.json) |
-| `agent` | 200K | 4 | 12 | 22.46 | 64.70 | 2.83 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-200k-c4.json`](raw/agent/20260719T174232Z/book-context-200k-c4.json) |
-| `agent` | 300K | 4 | 12 | 34.57 | 82.37 | 3.67 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`agent/20260719T174232Z/book-context-300k-c4.json`](raw/agent/20260719T174232Z/book-context-300k-c4.json) |
+| `fast` | 10K | 1 | 3 | 35.64 | 29.76 | 2.03 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T190448Z/book-context-10k-c1.json`](raw/fast/20260719T190448Z/book-context-10k-c1.json) |
+| `fast` | 200K | 1 | 3 | 52.47 | 33.93 | 33.13 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T190448Z/book-context-200k-c1.json`](raw/fast/20260719T190448Z/book-context-200k-c1.json) |
+| `fast` | 300K | 1 | 3 | 56.21 | 33.14 | 21.84 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast/20260719T190448Z/book-context-300k-c1.json`](raw/fast/20260719T190448Z/book-context-300k-c1.json) |
+| `fast-c4` | 10K | 1 | 3 | 35.20 | 33.75 | 0.34 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-10k-c1.json`](raw/fast-c4/20260719T184424Z/book-context-10k-c1.json) |
+| `fast-c4` | 200K | 1 | 3 | 36.20 | 22.45 | 33.51 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-200k-c1.json`](raw/fast-c4/20260719T184424Z/book-context-200k-c1.json) |
+| `fast-c4` | 300K | 1 | 3 | 51.59 | 30.70 | 22.02 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-300k-c1.json`](raw/fast-c4/20260719T184424Z/book-context-300k-c1.json) |
+| `fast-c4` | 10K | 4 | 12 | 20.10 | 69.40 | 1.43 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-10k-c4.json`](raw/fast-c4/20260719T184424Z/book-context-10k-c4.json) |
+| `fast-c4` | 200K | 4 | 12 | 19.64 | 63.31 | 2.47 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-200k-c4.json`](raw/fast-c4/20260719T184424Z/book-context-200k-c4.json) |
+| `fast-c4` | 300K | 4 | 12 | 32.59 | 79.67 | 3.58 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`fast-c4/20260719T184424Z/book-context-300k-c4.json`](raw/fast-c4/20260719T184424Z/book-context-300k-c4.json) |
+| `long-c4` | 10K | 1 | 3 | 35.30 | 33.78 | 0.34 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-10k-c1.json`](raw/long-c4/20260719T174232Z/book-context-10k-c1.json) |
+| `long-c4` | 200K | 1 | 3 | 36.94 | 22.94 | 34.06 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-200k-c1.json`](raw/long-c4/20260719T174232Z/book-context-200k-c1.json) |
+| `long-c4` | 300K | 1 | 3 | 53.77 | 31.50 | 22.00 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-300k-c1.json`](raw/long-c4/20260719T174232Z/book-context-300k-c1.json) |
+| `long-c4` | 10K | 4 | 12 | 19.39 | 60.10 | 3.87 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-10k-c4.json`](raw/long-c4/20260719T174232Z/book-context-10k-c4.json) |
+| `long-c4` | 200K | 4 | 12 | 22.46 | 64.70 | 2.83 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-200k-c4.json`](raw/long-c4/20260719T174232Z/book-context-200k-c4.json) |
+| `long-c4` | 300K | 4 | 12 | 34.57 | 82.37 | 3.67 | `14c06b6db367b20a8cbe13f28b1f767b1e983307` | [`long-c4/20260719T174232Z/book-context-300k-c4.json`](raw/long-c4/20260719T174232Z/book-context-300k-c4.json) |
 
-Generated: 2026-07-19T17:54:58+00:00
+Generated: 2026-07-19T19:10:23+00:00

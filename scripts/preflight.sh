@@ -17,10 +17,13 @@ require_command rsync
 minimum_kb=$((95 * 1024 * 1024))
 head_available_kb="$(awk '/MemAvailable/ { print $2 }' /proc/meminfo)"
 [ "$head_available_kb" -ge "$minimum_kb" ] || \
-  die "Forge has less than 95 GiB available memory"
+  die "head node has less than 95 GiB available memory"
 
 echo "Head: $(hostname) ($(whoami))"
-[ "$(whoami)" = "jun" ] || echo "warning: expected user jun on the head"
+expected_user="${WORKER_SSH%@*}"
+if [ "$expected_user" != "$WORKER_SSH" ] && [ "$(whoami)" != "$expected_user" ]; then
+  die "head user $(whoami) does not match worker SSH user $expected_user"
+fi
 ip -4 addr show dev "$HEAD_NCCL_SOCKET_IFNAME" | grep -F "$HEAD_ROCE_IP/" >/dev/null || \
   die "$HEAD_ROCE_IP is not configured on $HEAD_NCCL_SOCKET_IFNAME"
 ibdev2netdev | grep -F "$HEAD_NCCL_IB_HCA" | grep -F '(Up)' >/dev/null || \
@@ -35,7 +38,7 @@ ssh -o BatchMode=yes -o ConnectTimeout=5 "$WORKER_SSH" true || \
 
 ssh "$WORKER_SSH" "
   set -eu
-  [ \"\$(whoami)\" = jun ]
+  [ \"\$(whoami)\" = '$expected_user' ]
   ip -4 addr show dev '$WORKER_NCCL_SOCKET_IFNAME' | grep -F '$WORKER_ROCE_IP/' >/dev/null
   ibdev2netdev | grep -F '$WORKER_NCCL_IB_HCA' | grep -F '(Up)' >/dev/null
   show_gids | awk -v hca='$WORKER_NCCL_IB_HCA' -v idx='$WORKER_NCCL_IB_GID_INDEX' \
@@ -48,4 +51,4 @@ ssh "$WORKER_SSH" "
 
 docker info >/dev/null
 mkdir -p "$MODEL_DIR"
-echo "Preflight passed for profile=$PROFILE: Forge head -> Anvil worker over $HEAD_ROCE_IP/$WORKER_ROCE_IP"
+echo "Preflight passed for profile=$PROFILE: head -> worker over $HEAD_ROCE_IP/$WORKER_ROCE_IP"

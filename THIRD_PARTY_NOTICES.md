@@ -31,6 +31,11 @@ and v1.1 operational guidance come from drowzeys / keys:
 Their software license is preserved at `third_party/LICENSE-drowzeys`. The
 weights are a separate gated artifact and retain the original model terms.
 
+The Tony-derived overlay additionally ports drowzeys' stage-c ragged-batch and
+stable DSpark KV-slot changes in `dspark.py`, `dspark_proposer.py`, and
+`gpu_model_runner.py`. This is the concurrency bridge that makes the combined
+runtime testable at C4 without replacing Tony's remaining fast-path files.
+
 ## Hardware networking and remote access
 
 The fabric and Tailscale setup scripts follow NVIDIA's DGX Spark playbooks:

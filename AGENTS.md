@@ -2,17 +2,16 @@
 
 ## Mission
 
-Maintain a reproducible two-DGX-Spark deployment that combines drowzeys v1.1
-weights with two explicitly separate runtime profiles. Never claim that the
-hybrid reaches an upstream tok/s figure until it has been measured here.
+Maintain a reproducible two-DGX-Spark deployment that combines drowzeys'
+uncensored v1.1 weights with Tony-derived runtime optimizations. Never claim
+that a configuration reaches an upstream tok/s figure until measured here.
 
-## Fixed deployment facts
+## Deployment invariants
 
-- Forge is rank 0, download node, and API head: `10.100.10.1` on
-  `enp1s0f0np0` / `rocep1s0f0`.
-- Anvil is rank 1: `10.100.10.2` on `enp1s0f1np1` / `rocep1s0f1`.
-- Both Linux accounts are `jun`. Hostnames must remain distinct.
-- Download gated weights only on Forge. Replicate to Anvil with `rsync` over
+- Rank 0 is the download/API head; rank 1 is the worker. Hostnames remain
+  distinct and deployment-specific values belong only in the ignored `.env`.
+- Use the same Linux account on both nodes.
+- Download gated weights only on the head. Replicate to the worker with `rsync` over
   the direct fabric. Never download the full model independently on both nodes.
 - Tailscale is management-only. NCCL and bulk transfer use the CX-7 addresses.
 
@@ -20,8 +19,8 @@ hybrid reaches an upstream tok/s figure until it has been measured here.
 
 - Never commit `.env`, HF tokens, private SSH keys, model weights, or generated
   benchmark data containing prompts.
-- Commit only reviewed benchmark summaries and generated charts. Keep raw
-  captures under the ignored `benchmark-results/` tree.
+- Commit only reviewed, privacy-scrubbed benchmark evidence and generated
+  charts. Keep unsanitized captures under the ignored `benchmark-results/` tree.
 - Keep the API bound to `127.0.0.1` by default. Document authentication and
   firewalling before changing it to `0.0.0.0`.
 - Do not delete or overwrite netplan files. `setup-fabric.sh` may only manage
@@ -33,10 +32,10 @@ hybrid reaches an upstream tok/s figure until it has been measured here.
 
 ## Change workflow
 
-1. Read `.env.example`, both profile files, and the relevant upstream source.
+1. Read `.env.example`, all profile files, and the relevant upstream source.
 2. Run `scripts/preflight.sh` before cluster operations.
 3. Validate shell with `bash -n scripts/*.sh` and ShellCheck when available.
-4. Validate Compose for both profiles before launch.
+4. Validate Compose for every profile before launch.
 5. Start rank 1 before rank 0; stop rank 0 before rank 1.
 6. Benchmark a runtime/configuration change against the unchanged profile and
    record image digest, model revision, prompt/output lengths, context, and
@@ -49,9 +48,16 @@ hybrid reaches an upstream tok/s figure until it has been measured here.
 10. Treat `TODO.md` as the resumable execution ledger and update checkboxes only
    when supporting evidence exists.
 
-## Profile boundaries
+## Profile decisions
 
-- `fast` uses the Tony-derived overlay and `fp8`, one sequence, 900K context.
-- `agent` uses drowzeys stage-c and `nvfp4_ds_mla`, four sequences, 1M context.
+- All profiles use the same uncensored v1.1 weights, tool parser, and reasoning
+  parser. A profile name does not change the model's agent behavior.
+- `fast` uses the Tony-derived overlay and `fp8` for measured C1 performance.
+- `fast-c4` combines Tony's fast path with drowzeys' ragged-batch/stable-slot
+  concurrency port. It is the measured short-context C4 choice.
+- `long-c4` is drowzeys stage-c and is the measured 200K/300K C4 choice. It is
+  a serving tradeoff, not a statement about AI-agent capability.
+- Never recommend one profile universally: use `fast` for C1, `fast-c4` for
+  short C4, and `long-c4` for measured long C4 or its full 1M configuration.
 - Do not set `nvfp4_ds_mla` on the Tony-derived image unless a source audit and
   runtime test prove support.

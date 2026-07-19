@@ -14,18 +14,18 @@ require_command docker
 require_command rsync
 require_command ssh
 
-[ -f "$MODEL_DIR/model.safetensors.index.json" ] || die "model is missing on Forge: $MODEL_DIR"
+[ -f "$MODEL_DIR/model.safetensors.index.json" ] || die "model is missing on head: $MODEL_DIR"
 ssh "$WORKER_SSH" test -f "$WORKER_MODEL_DIR/model.safetensors.index.json" || \
-  die "model is missing on Anvil: $WORKER_MODEL_DIR"
+  die "model is missing on worker: $WORKER_MODEL_DIR"
 
-echo "Syncing deployment files to Anvil (model weights are not included)..."
+echo "Syncing deployment files to the worker (model weights are not included)..."
 ssh "$WORKER_SSH" "mkdir -p '$WORKER_CHECKOUT'"
 rsync -az \
   --exclude .git/ --exclude .env --exclude .venv-hf/ --exclude benchmark-results/ \
   "$ROOT_DIR/" "$WORKER_SSH:$WORKER_CHECKOUT/"
 scp "$ENV_FILE" "$WORKER_SSH:$WORKER_CHECKOUT/.env"
 
-echo "Starting Anvil rank 1 first..."
+echo "Starting worker rank 1 first..."
 ssh "$WORKER_SSH" "
   cd '$WORKER_CHECKOUT'
   set -a
@@ -43,7 +43,7 @@ ssh "$WORKER_SSH" "
   docker compose --env-file .env -f docker-compose.dspark.yml up -d
 "
 
-echo "Starting Forge rank 0..."
+echo "Starting head rank 0..."
 COMPOSE_PROJECT_NAME=dual-spark \
 MODEL_DIR="$MODEL_DIR" \
 NODE_RANK=0 HEADLESS='' \
@@ -68,8 +68,8 @@ for _ in $(seq 1 "$attempts"); do
   sleep "$delay"
 done
 
-echo "Timed out waiting for the API. Recent Forge logs:" >&2
+echo "Timed out waiting for the API. Recent head logs:" >&2
 docker compose --env-file "$ENV_FILE" -f "$ROOT_DIR/docker-compose.dspark.yml" logs --tail=150 >&2 || true
-echo "Recent Anvil logs:" >&2
+echo "Recent worker logs:" >&2
 ssh "$WORKER_SSH" "cd '$WORKER_CHECKOUT' && docker compose --env-file .env -f docker-compose.dspark.yml logs --tail=150" >&2 || true
 exit 1

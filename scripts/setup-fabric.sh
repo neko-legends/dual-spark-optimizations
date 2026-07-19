@@ -3,8 +3,8 @@ set -euo pipefail
 
 usage() {
   echo "usage: sudo $0 <head|worker> <active-interface>" >&2
-  echo "example Forge: sudo $0 head enp1s0f0np0" >&2
-  echo "example Anvil: sudo $0 worker enp1s0f1np1" >&2
+  echo "example head: sudo $0 head HEAD_CX7_INTERFACE" >&2
+  echo "example worker: sudo $0 worker WORKER_CX7_INTERFACE" >&2
   exit 2
 }
 

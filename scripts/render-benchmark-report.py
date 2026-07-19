@@ -13,8 +13,13 @@ from typing import Iterable
 
 
 PROMPT_ORDER = {"10K": 0, "200K": 1, "300K": 2}
-PROFILE_ORDER = {"fast": 0, "agent": 1}
-PROFILE_COLORS = {"fast": "#65d6ad", "agent": "#7aa2f7"}
+PROFILE_ORDER = {"fast": 0, "fast-c4": 1, "long-c4": 2}
+PROFILE_COLORS = {"fast": "#65d6ad", "fast-c4": "#f59e0b", "long-c4": "#7aa2f7"}
+PROFILE_LABELS = {
+    "fast": "Tony C1",
+    "fast-c4": "Tony C4-capable",
+    "long-c4": "stage-c long C4",
+}
 
 
 @dataclass(frozen=True)
@@ -88,7 +93,7 @@ def render_svg(results: Iterable[Result]) -> str:
                 '<rect width="100%" height="100%" rx="18" fill="#111827"/>',
                 _svg_text(560, 145, "Dual-Spark benchmark comparison", fill="#f8fafc", font_size=30, text_anchor="middle", font_family="system-ui, sans-serif", font_weight="700"),
                 _svg_text(560, 195, "Benchmarks pending", fill="#fbbf24", font_size=25, text_anchor="middle", font_family="system-ui, sans-serif"),
-                _svg_text(560, 238, "Run both profiles, then render benchmark-results to replace this chart.", fill="#a7b0c0", font_size=16, text_anchor="middle", font_family="system-ui, sans-serif"),
+                _svg_text(560, 238, "Run the profiles, then render benchmark-results to replace this chart.", fill="#a7b0c0", font_size=16, text_anchor="middle", font_family="system-ui, sans-serif"),
                 "</svg>",
             ]
         ) + "\n"
@@ -137,14 +142,17 @@ def render_svg(results: Iterable[Result]) -> str:
     for profile in sorted({row.profile for row in rows}, key=lambda item: PROFILE_ORDER.get(item, 99)):
         color = PROFILE_COLORS.get(profile, "#c084fc")
         output.append(f'<rect x="{legend_x}" y="605" width="16" height="16" rx="3" fill="{color}"/>')
-        output.append(_svg_text(legend_x + 24, 618, profile, fill="#d8dee9", font_size=13, font_family="system-ui, sans-serif"))
-        legend_x += 100
+        output.append(_svg_text(legend_x + 24, 618, PROFILE_LABELS.get(profile, profile), fill="#d8dee9", font_size=13, font_family="system-ui, sans-serif"))
+        legend_x += 190
     output.append("</svg>")
     return "\n".join(output) + "\n"
 
 
 def render_concurrency_svg(results: Iterable[Result]) -> str:
-    rows = [row for row in results if row.profile == "agent" and row.concurrency in (1, 4)]
+    rows = [
+        row for row in results
+        if row.profile in ("fast-c4", "long-c4") and row.concurrency in (1, 4)
+    ]
     width, height = 1120, 470
     if not rows:
         return render_svg([]).replace('height="360"', 'height="470"').replace(
@@ -153,8 +161,8 @@ def render_concurrency_svg(results: Iterable[Result]) -> str:
     output = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="18" fill="#111827"/>',
-        _svg_text(55, 55, "Agent profile concurrency scaling", fill="#f8fafc", font_size=27, font_family="system-ui, sans-serif", font_weight="700"),
-        _svg_text(55, 82, "Mean aggregate completion throughput · three groups per prompt size", fill="#a7b0c0", font_size=14, font_family="system-ui, sans-serif"),
+        _svg_text(55, 55, "C1 and C4 runtime comparison", fill="#f8fafc", font_size=27, font_family="system-ui, sans-serif", font_weight="700"),
+        _svg_text(55, 82, "Mean aggregate completion throughput · matched uncensored v1.1 weights", fill="#a7b0c0", font_size=14, font_family="system-ui, sans-serif"),
     ]
     chart_x, chart_y, chart_w, chart_h = 80, 115, 980, 265
     maximum = max(row.aggregate_tps for row in rows) * 1.15
@@ -164,26 +172,32 @@ def render_concurrency_svg(results: Iterable[Result]) -> str:
         output.append(f'<line x1="{chart_x}" y1="{y:.1f}" x2="{chart_x + chart_w}" y2="{y:.1f}" stroke="#2b3548"/>')
         output.append(_svg_text(chart_x - 10, y + 5, f"{value:.1f}", fill="#8993a4", font_size=12, text_anchor="end", font_family="system-ui, sans-serif"))
     prompts = sorted({row.prompt for row in rows}, key=lambda item: PROMPT_ORDER.get(item, 99))
-    colors = {1: "#7aa2f7", 4: "#f59e0b"}
-    group_w, bar_w = chart_w / len(prompts), 76
+    series = [("fast-c4", 1), ("fast-c4", 4), ("long-c4", 1), ("long-c4", 4)]
+    colors = {
+        ("fast-c4", 1): "#65d6ad",
+        ("fast-c4", 4): "#f59e0b",
+        ("long-c4", 1): "#7aa2f7",
+        ("long-c4", 4): "#c084fc",
+    }
+    group_w, bar_w = chart_w / len(prompts), 52
     for prompt_index, prompt in enumerate(prompts):
         center = chart_x + group_w * (prompt_index + 0.5)
         output.append(_svg_text(center, chart_y + chart_h + 27, prompt, fill="#d8dee9", font_size=14, text_anchor="middle", font_family="system-ui, sans-serif"))
-        for concurrency_index, concurrency in enumerate((1, 4)):
-            matches = [row for row in rows if row.prompt == prompt and row.concurrency == concurrency]
+        for series_index, (profile, concurrency) in enumerate(series):
+            matches = [row for row in rows if row.prompt == prompt and row.profile == profile and row.concurrency == concurrency]
             if not matches:
                 continue
             value = matches[-1].aggregate_tps
-            x = center + (concurrency_index - 0.5) * (bar_w + 12) - bar_w / 2
+            x = center + (series_index - (len(series) - 1) / 2) * (bar_w + 7) - bar_w / 2
             bar_h = chart_h * value / maximum
             y = chart_y + chart_h - bar_h
-            output.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w}" height="{bar_h:.1f}" rx="6" fill="{colors[concurrency]}"/>')
+            output.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w}" height="{bar_h:.1f}" rx="6" fill="{colors[(profile, concurrency)]}"/>')
             output.append(_svg_text(x + bar_w / 2, y - 7, f"{value:.1f}", fill="#f8fafc", font_size=12, text_anchor="middle", font_family="system-ui, sans-serif"))
     legend_x = 80
-    for concurrency in (1, 4):
-        output.append(f'<rect x="{legend_x}" y="430" width="16" height="16" rx="3" fill="{colors[concurrency]}"/>')
-        output.append(_svg_text(legend_x + 24, 443, f"C{concurrency} aggregate tok/s", fill="#d8dee9", font_size=13, font_family="system-ui, sans-serif"))
-        legend_x += 190
+    for profile, concurrency in series:
+        output.append(f'<rect x="{legend_x}" y="430" width="16" height="16" rx="3" fill="{colors[(profile, concurrency)]}"/>')
+        output.append(_svg_text(legend_x + 24, 443, f"{PROFILE_LABELS[profile]} C{concurrency}", fill="#d8dee9", font_size=13, font_family="system-ui, sans-serif"))
+        legend_x += 245
     output.append("</svg>")
     return "\n".join(output) + "\n"
 
@@ -193,9 +207,9 @@ def render_markdown(results: list[Result], generated_at: str) -> str:
         return f"""# Measured benchmarks
 
 No local benchmark results are available yet. This is intentional: upstream
-numbers are not substituted for measurements from Forge and Anvil.
+numbers are not substituted for measurements from a private deployment.
 
-After running both profiles, generate this report and its chart from Forge:
+After running the profiles, generate this report and its charts from the head:
 
 ```bash
 python3 scripts/render-benchmark-report.py
@@ -240,7 +254,7 @@ def main() -> None:
     (args.output_dir / "benchmark-comparison.svg").write_text(
         render_svg(results), encoding="utf-8"
     )
-    (args.output_dir / "agent-concurrency.svg").write_text(
+    (args.output_dir / "concurrency-comparison.svg").write_text(
         render_concurrency_svg(results), encoding="utf-8"
     )
     (args.output_dir / "BENCHMARKS.md").write_text(

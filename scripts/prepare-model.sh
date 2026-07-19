@@ -19,21 +19,21 @@ fi
 
 if [ -z "${HF_TOKEN:-}" ]; then
   HF_HUB_OFFLINE=0 "$HF_VENV/bin/hf" auth whoami >/dev/null 2>&1 || {
-    echo "Forge is not authenticated to Hugging Face." >&2
+    echo "The head node is not authenticated to Hugging Face." >&2
     echo "Accept the gated model terms, then run: $HF_VENV/bin/hf auth login" >&2
     exit 1
   }
 fi
 
 mkdir -p "$MODEL_DIR"
-echo "Downloading the gated model on Forge only: $MODEL_ID"
+echo "Downloading the gated model on the head node only: $MODEL_ID"
 HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0 "$HF_VENV/bin/hf" download "$MODEL_ID" \
   --revision "$MODEL_REVISION" \
   --local-dir "$MODEL_DIR" \
   --max-workers "${HF_DOWNLOAD_WORKERS:-4}"
 
 manifest="$MODEL_DIR/.dual-spark-shards.sha256"
-echo "Hashing the 48 shards on Forge to create a transfer manifest..."
+echo "Hashing the 48 shards on the head node to create a transfer manifest..."
 python3 "$SCRIPT_DIR/verify-model.py" "$MODEL_DIR" --write-manifest "$manifest"
 
 echo "Transferring the verified model once over the direct fabric to $WORKER_SSH:$WORKER_MODEL_DIR"

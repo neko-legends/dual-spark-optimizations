@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-expected_hostname="${1:-anvil}"
+expected_hostname="${1:?usage: sudo $0 EXPECTED_HOSTNAME}"
 [ "$(id -u)" -eq 0 ] || { echo "run this script with sudo" >&2; exit 1; }
 [ "$(hostname)" = "$expected_hostname" ] || {
   echo "refusing: expected hostname '$expected_hostname', found '$(hostname)'" >&2
@@ -30,4 +30,4 @@ echo "Machine ID changed on $(hostname)."
 echo "old=$old_id"
 echo "new=$new_id"
 echo "backup=$backup_dir"
-echo "Reboot this node now, then verify Forge and Anvil differ."
+echo "Reboot this node now, then verify the two nodes have different machine IDs."

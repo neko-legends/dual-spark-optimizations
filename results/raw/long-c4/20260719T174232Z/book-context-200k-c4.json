@@ -4,9 +4,9 @@
   "endpoint": "http://127.0.0.1:8888/v1/chat/completions",
   "model": "deepseek-v4-flash-dspark-v1.1-abliterated",
   "model_revision": "14c06b6db367b20a8cbe13f28b1f767b1e983307",
-  "profile": "agent",
+  "profile": "long-c4",
   "prompt": {
-    "path": "/home/jun/dual-spark-optimizations/benchmarks/prompts/book-context-200k.txt",
+    "path": "benchmarks/prompts/book-context-200k.txt",
     "bytes": 840403,
     "characters": 840403,
     "sha256": "a794ca243983eb3387bec6728db4b0c72a99ee2a98cfee7223269708e4ae228c"
