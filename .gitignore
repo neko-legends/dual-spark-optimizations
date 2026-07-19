@@ -1,0 +1,24 @@
+.env
+.venv-hf/
+*.log
+*.old
+__pycache__/
+.pytest_cache/
+benchmark-results/
+fabric-results/
+
+# Model weights, local model stores, and exported runtime images never belong here.
+*.safetensors
+*.safetensors.index.json
+*.gguf
+*.ckpt
+*.onnx
+*.pt
+*.pth
+model/
+models/
+runtime-images/
+*.tar.zst
+.cache/
+.huggingface/
+huggingface/

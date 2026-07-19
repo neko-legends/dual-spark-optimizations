@@ -1,0 +1,9 @@
+*.sh text eol=lf
+*.py text eol=lf
+*.env text eol=lf
+*.example text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+benchmarks/prompts/*.txt -text whitespace=-trailing-space,-blank-at-eof
+Dockerfile* text eol=lf
