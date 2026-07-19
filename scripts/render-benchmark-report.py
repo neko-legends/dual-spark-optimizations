@@ -15,15 +15,15 @@ from typing import Iterable
 PROMPT_ORDER = {"10K": 0, "200K": 1, "300K": 2}
 PROFILE_ORDER = {"adaptive": 0, "fast": 1, "fast-c4": 2, "long-c4": 3}
 PROFILE_COLORS = {
-    "adaptive": "#22d3ee",
-    "fast": "#65d6ad",
-    "fast-c4": "#f59e0b",
-    "long-c4": "#7aa2f7",
+    "adaptive": "#f59e0b",
+    "fast": "#22d3ee",
+    "fast-c4": "#64748b",
+    "long-c4": "#a78bfa",
 }
 PROFILE_LABELS = {
     "adaptive": "Adaptive",
     "fast": "Tony C1",
-    "fast-c4": "Pre-adaptive C4",
+    "fast-c4": "Historical C4",
     "long-c4": "stage-c long C4",
 }
 
@@ -90,7 +90,12 @@ def _svg_text(x: float, y: float, value: str, **attrs: object) -> str:
 
 
 def render_svg(results: Iterable[Result]) -> str:
-    rows = [row for row in results if row.concurrency == 1]
+    rows = [
+        row
+        for row in results
+        if row.concurrency == 1
+        and row.profile in ("adaptive", "fast", "long-c4")
+    ]
     width, height = 1120, 650
     if not rows:
         return "\n".join(
@@ -181,10 +186,10 @@ def render_concurrency_svg(results: Iterable[Result]) -> str:
     prompts = sorted({row.prompt for row in rows}, key=lambda item: PROMPT_ORDER.get(item, 99))
     series = [("fast", 1), ("adaptive", 1), ("adaptive", 4), ("long-c4", 4)]
     colors = {
-        ("fast", 1): "#65d6ad",
-        ("adaptive", 1): "#22d3ee",
-        ("adaptive", 4): "#f59e0b",
-        ("long-c4", 4): "#c084fc",
+        ("fast", 1): PROFILE_COLORS["fast"],
+        ("adaptive", 1): PROFILE_COLORS["adaptive"],
+        ("adaptive", 4): PROFILE_COLORS["adaptive"],
+        ("long-c4", 4): PROFILE_COLORS["long-c4"],
     }
     group_w, bar_w = chart_w / len(prompts), 52
     for prompt_index, prompt in enumerate(prompts):
@@ -230,18 +235,14 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
         adaptive_c1 = one("adaptive", prompt, 1)
         fast_c1 = one("fast", prompt, 1)
         adaptive_c4 = one("adaptive", prompt, 4)
-        prior_c4 = [
-            result
-            for profile in ("fast-c4", "long-c4")
-            if (result := one(profile, prompt, 4)) is not None
-        ]
+        long_c4 = one("long-c4", prompt, 4)
         if adaptive_c1 is not None and fast_c1 is not None:
             c1.append((prompt, fast_c1.decode_tps, adaptive_c1.decode_tps))
-        if adaptive_c4 is not None and prior_c4:
+        if adaptive_c4 is not None and long_c4 is not None:
             c4.append(
                 (
                     prompt,
-                    max(result.aggregate_tps for result in prior_c4),
+                    long_c4.aggregate_tps,
                     adaptive_c4.aggregate_tps,
                 )
             )
@@ -257,10 +258,11 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
     grid = "#2a3a52"
     text_color = "#f8fafc"
     muted = "#9fb0c6"
-    adaptive = "#22d3ee"
-    specialist = "#64748b"
+    adaptive = PROFILE_COLORS["adaptive"]
+    fast = PROFILE_COLORS["fast"]
+    long_c4 = PROFILE_COLORS["long-c4"]
     positive = "#4ade80"
-    tradeoff = "#fbbf24"
+    tradeoff = "#fb7185"
     output = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="adaptive-title adaptive-desc">',
         '<title id="adaptive-title">Adaptive DSpark performance versus specialist profiles</title>',
@@ -268,9 +270,9 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
         f'<rect width="100%" height="100%" rx="22" fill="{bg}"/>',
         _svg_text(32, 45, "One runtime. Fast alone. Faster together.", fill=text_color, font_size=28, font_family="system-ui, sans-serif", font_weight="750"),
         _svg_text(32, 73, "Uncensored v1.1 · two DGX Sparks · matched 256-token tests", fill=muted, font_size=15, font_family="system-ui, sans-serif"),
-        f'<rect x="32" y="94" width="576" height="58" rx="13" fill="#0e7490"/>',
-        _svg_text(52, 119, "AUTOMATIC LIVE-BATCH ROUTING", fill="#cffafe", font_size=14, font_family="system-ui, sans-serif", font_weight="750", letter_spacing="0.8"),
-        _svg_text(52, 141, "No agent skill, request flag, or model reload required", fill="#ecfeff", font_size=16, font_family="system-ui, sans-serif"),
+        f'<rect x="32" y="94" width="576" height="58" rx="13" fill="#9a3412"/>',
+        _svg_text(52, 119, "AUTOMATIC LIVE-BATCH ROUTING", fill="#ffedd5", font_size=14, font_family="system-ui, sans-serif", font_weight="750", letter_spacing="0.8"),
+        _svg_text(52, 141, "No agent skill, request flag, or model reload required", fill="#fff7ed", font_size=16, font_family="system-ui, sans-serif"),
     ]
 
     def panel(
@@ -280,6 +282,8 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
         data: list[tuple[str, float, float]],
         maximum: float,
         delta_mode: str,
+        baseline_label: str,
+        baseline_color: str,
     ) -> None:
         output.append(f'<rect x="32" y="{y}" width="576" height="282" rx="16" fill="{card}"/>')
         output.append(_svg_text(52, y + 37, title, fill=text_color, font_size=20, font_family="system-ui, sans-serif", font_weight="700"))
@@ -304,8 +308,8 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
             output.append(_svg_text(125, row_y + 20, delta_text, fill=delta_color, font_size=14, text_anchor="middle", font_family="system-ui, sans-serif", font_weight="750"))
             baseline_w = plot_w * baseline / maximum
             current_w = plot_w * current / maximum
-            output.append(f'<rect x="{plot_x}" y="{row_y}" width="{baseline_w:.1f}" height="20" rx="5" fill="{specialist}"/>')
-            output.append(_svg_text(plot_x + 8, row_y + 15, f"specialist  {baseline:.2f}", fill="#f1f5f9", font_size=13, font_family="system-ui, sans-serif", font_weight="650"))
+            output.append(f'<rect x="{plot_x}" y="{row_y}" width="{baseline_w:.1f}" height="20" rx="5" fill="{baseline_color}"/>')
+            output.append(_svg_text(plot_x + 8, row_y + 15, f"{baseline_label}  {baseline:.2f}", fill="#08111f", font_size=13, font_family="system-ui, sans-serif", font_weight="750"))
             output.append(f'<rect x="{plot_x}" y="{row_y + 25}" width="{current_w:.1f}" height="20" rx="5" fill="{adaptive}"/>')
             output.append(_svg_text(plot_x + 8, row_y + 40, f"adaptive  {current:.2f}", fill="#082f49", font_size=13, font_family="system-ui, sans-serif", font_weight="750"))
 
@@ -316,14 +320,18 @@ def render_adaptive_svg(results: Iterable[Result]) -> str:
         c1,
         60.0,
         "loss",
+        "fast",
+        fast,
     )
     panel(
         474,
         "C4 · Four-request aggregate throughput",
-        "Adaptive beats the best prior concurrent result",
+        "Adaptive beats long-c4 at every tested context",
         c4,
         90.0,
         "gain",
+        "long-c4",
+        long_c4,
     )
     output.extend(
         [
@@ -386,21 +394,25 @@ def main() -> None:
     results = [] if args.placeholder else load_results(args.input)
     if not results and not args.placeholder:
         parser.error(f"no benchmark JSON reports found under {args.input}")
+    published_results = [row for row in results if row.profile != "fast-c4"]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     generated_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
     (args.output_dir / "benchmark-comparison.svg").write_text(
-        render_svg(results), encoding="utf-8"
+        render_svg(published_results), encoding="utf-8"
     )
     (args.output_dir / "concurrency-comparison.svg").write_text(
-        render_concurrency_svg(results), encoding="utf-8"
+        render_concurrency_svg(published_results), encoding="utf-8"
     )
     (args.output_dir / "adaptive-performance.svg").write_text(
-        render_adaptive_svg(results), encoding="utf-8"
+        render_adaptive_svg(published_results), encoding="utf-8"
     )
     (args.output_dir / "BENCHMARKS.md").write_text(
-        render_markdown(results, generated_at), encoding="utf-8"
+        render_markdown(published_results, generated_at), encoding="utf-8"
     )
-    print(f"Rendered {len(results)} benchmark report(s) into {args.output_dir}")
+    print(
+        f"Rendered {len(published_results)} benchmark report(s) into "
+        f"{args.output_dir}"
+    )
 
 
 if __name__ == "__main__":

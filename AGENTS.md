@@ -57,7 +57,6 @@ that a configuration reaches an upstream tok/s figure until measured here.
   handling when requests overlap; clients need no special behavior.
 - `fast` is the C1 specialist. Use it only when accepting no concurrent work is
   worth its measured 1.6–8.8% C1 advantage over `adaptive`.
-- `fast-c4` is retained as a compatibility alias for `adaptive`.
 - `long-c4` is drowzeys stage-c. It remains useful for the full 1M
   configuration, not as the measured default or a claim about agent ability.
 - Do not set `nvfp4_ds_mla` on the Tony-derived image unless a source audit and

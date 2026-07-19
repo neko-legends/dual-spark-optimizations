@@ -10,7 +10,7 @@ require_command docker
 require_command ssh
 
 case "$PROFILE" in
-  fast|fast-c4|adaptive)
+  fast|adaptive)
     "$SCRIPT_DIR/verify-overlay-sources.sh"
     docker build \
       -f "$ROOT_DIR/recipe/Dockerfile.dspark-runtime-overlay" \

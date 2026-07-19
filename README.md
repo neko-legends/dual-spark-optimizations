@@ -23,9 +23,9 @@ API with no skill, flag, or model reload.
 ### Why the adaptive profile matters
 
 The full baseline comparison makes the compromises visible: the dedicated
-`fast` profile wins C1, but cannot run true C4; the pre-adaptive C4 and stage-c
-profiles lose substantial single-request speed in some cases. `adaptive`
-avoids those extremes while accepting concurrent work automatically.
+`fast` profile wins C1 but cannot run true C4, while `long-c4` loses substantial
+single-request speed in some cases. `adaptive` avoids those extremes while
+accepting concurrent work automatically.
 
 ![Full C1 and TTFT comparison, including the weaker specialist tradeoffs](results/benchmark-comparison.svg)
 
@@ -88,12 +88,11 @@ by its `10.100.10.2` destination; it copied 173,766,905,451 bytes in 536 seconds
 | --- | --- | ---: | ---: | --- | --- |
 | `adaptive` | Tony overlay + drowzeys concurrency port | 900,000 | 4 | `fp8` | **Recommended:** automatically optimizes one to four active requests |
 | `fast` | Tony-derived overlay | 900,000 | 1 | `fp8` | C1 specialist, especially when every tok/s matters at 200K |
-| `fast-c4` | Same as `adaptive` | 900,000 | 4 | `fp8` | Backward-compatible profile alias |
 | `long-c4` | drowzeys stage-c | 1,048,576 | 4 | `nvfp4_ds_mla` | Full 1M stage-c configuration |
 
 The stage-c `long-c4` profile follows drowzeys' privileged-container launch.
-The Tony-derived profiles remain unprivileged. Users selecting `adaptive`,
-`fast`, or the compatibility alias `fast-c4` do not pull/install stage-c.
+The Tony-derived profiles remain unprivileged. Users selecting `adaptive` or
+`fast` do not pull/install stage-c.
 
 Tony reported a 62.48 tok/s mean on the stock model with his single-stream
 profile. drowzeys reported about 50 tok/s C1 and 113 tok/s aggregate C4 with
@@ -107,8 +106,6 @@ sequential requests. C4 is three groups of four simultaneous requests. Because
 the runtime reported prefix-cache hits for repeated identical prompts, TTFT
 includes a full-prefill first request and cache-assisted repeats; decode and
 aggregate throughput are the primary comparison metrics.
-The `fast-c4` rows preserve the pre-adaptive combined-image baseline; the
-current `fast-c4` profile file is a compatibility alias for `adaptive`.
 
 | Profile | Prompt | C1 decode tok/s | C1 aggregate tok/s | C4 aggregate tok/s |
 | --- | ---: | ---: | ---: | ---: |
@@ -118,9 +115,6 @@ current `fast-c4` profile file is a compatibility alias for `adaptive`.
 | `fast` | 10K | 35.64 | 29.76 | — |
 | `fast` | 200K | 52.47 | 33.93 | — |
 | `fast` | 300K | 56.21 | 33.14 | — |
-| `fast-c4` | 10K | 35.20 | 33.75 | 69.40 |
-| `fast-c4` | 200K | 36.20 | 22.45 | 63.31 |
-| `fast-c4` | 300K | 51.59 | 30.70 | 79.67 |
 | `long-c4` | 10K | 35.30 | 33.78 | 60.10 |
 | `long-c4` | 200K | 36.94 | 22.94 | 64.70 |
 | `long-c4` | 300K | 53.77 | 31.50 | 82.37 |

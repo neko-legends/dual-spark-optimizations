@@ -105,7 +105,7 @@ only after recording evidence in the repository or the final deployment notes.
 - [x] Vendor and verify Tony-derived overlay sources.
 - [x] Add a `fast` profile using `fp8`, C1, and 900K context.
 - [x] Add a `long-c4` profile using stage-c, `nvfp4_ds_mla`, C4, and 1M context.
-- [x] Add a `fast-c4` profile with the Tony runtime and four live sequences.
+- [x] Prototype four-sequence serving before adding live-batch adaptive dispatch.
 - [x] Port drowzeys' ragged-batch/stable-slot C4 support into the fast overlay.
 - [x] Keep unsupported KV-cache modes out of the Tony-derived image.
 - [x] Build/pull the runtime only on the head and stream it to the worker.

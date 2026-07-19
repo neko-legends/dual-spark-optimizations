@@ -68,7 +68,7 @@ class RenderBenchmarkReportTests(unittest.TestCase):
             for profile, concurrency, decode, aggregate in (
                 ("fast", 1, fast_c1, fast_c1),
                 ("adaptive", 1, adaptive_c1, adaptive_c1),
-                ("fast-c4", 4, prior_c4 / 4, prior_c4),
+                ("long-c4", 4, prior_c4 / 4, prior_c4),
                 ("adaptive", 4, adaptive_c4 / 4, adaptive_c4),
             ):
                 adaptive_rows.append(

@@ -24,7 +24,7 @@ Tony's pinned overlay advertises `fp8` / `fp8_ds_mla`; it does not advertise
 - `fast` uses the Tony-derived image, `fp8`, C1, and 900K;
 - `adaptive` adds drowzeys' ragged-batch and stable-KV-slot concurrency changes
   while preserving Tony's original row-zero path whenever the live batch is a
-  single request; `fast-c4` is a compatibility alias;
+  single request;
 - `long-c4` is drowzeys stage-c with `nvfp4_ds_mla`, C4, and 1M context.
 
 Putting `nvfp4_ds_mla` into the Tony-derived image without a source audit would
