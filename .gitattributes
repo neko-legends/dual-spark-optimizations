@@ -5,5 +5,8 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 *.md text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+results/raw/**/*.txt text eol=lf
 benchmarks/prompts/*.txt -text whitespace=-trailing-space,-blank-at-eof
 Dockerfile* text eol=lf

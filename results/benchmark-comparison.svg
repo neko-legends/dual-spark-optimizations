@@ -1,6 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650">
 <rect width="100%" height="100%" rx="18" fill="#111827"/>
-<text x="560.0" y="145.0" fill="#f8fafc" font-size="30" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700">Dual-Spark benchmark comparison</text>
-<text x="560.0" y="195.0" fill="#fbbf24" font-size="25" text-anchor="middle" font-family="system-ui, sans-serif">Benchmarks pending</text>
-<text x="560.0" y="238.0" fill="#a7b0c0" font-size="16" text-anchor="middle" font-family="system-ui, sans-serif">Run both profiles, then render benchmark-results to replace this chart.</text>
+<text x="55.0" y="55.0" fill="#f8fafc" font-size="27" font-family="system-ui, sans-serif" font-weight="700">Dual-Spark measured benchmark comparison</text>
+<text x="55.0" y="82.0" fill="#a7b0c0" font-size="14" font-family="system-ui, sans-serif">Same v1.1 weights · TTFT includes first full prefill plus cache-assisted repeats</text>
+<text x="55.0" y="115.0" fill="#f8fafc" font-size="18" font-family="system-ui, sans-serif" font-weight="600">Mean decode throughput (C1)</text>
+<line x1="55" y1="520.0" x2="530" y2="520.0" stroke="#2b3548"/>
+<text x="47.0" y="525.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">0.0</text>
+<line x1="55" y1="422.5" x2="530" y2="422.5" stroke="#2b3548"/>
+<text x="47.0" y="427.5" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">16.5</text>
+<line x1="55" y1="325.0" x2="530" y2="325.0" stroke="#2b3548"/>
+<text x="47.0" y="330.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">32.9</text>
+<line x1="55" y1="227.5" x2="530" y2="227.5" stroke="#2b3548"/>
+<text x="47.0" y="232.5" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">49.4</text>
+<line x1="55" y1="130.0" x2="530" y2="130.0" stroke="#2b3548"/>
+<text x="47.0" y="135.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">65.9</text>
+<text x="134.2" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">10K</text>
+<rect x="83.2" y="302.2" width="48.0" height="217.8" rx="5" fill="#65d6ad"/>
+<text x="107.2" y="295.2" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.8</text>
+<rect x="137.2" y="311.0" width="48.0" height="209.0" rx="5" fill="#7aa2f7"/>
+<text x="161.2" y="304.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.3</text>
+<text x="292.5" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">200K</text>
+<rect x="241.5" y="224.8" width="48.0" height="295.2" rx="5" fill="#65d6ad"/>
+<text x="265.5" y="217.8" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">49.9</text>
+<rect x="295.5" y="301.3" width="48.0" height="218.7" rx="5" fill="#7aa2f7"/>
+<text x="319.5" y="294.3" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.9</text>
+<text x="450.8" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">300K</text>
+<rect x="399.8" y="180.9" width="48.0" height="339.1" rx="5" fill="#65d6ad"/>
+<text x="423.8" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">57.3</text>
+<rect x="453.8" y="201.7" width="48.0" height="318.3" rx="5" fill="#7aa2f7"/>
+<text x="477.8" y="194.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">53.8</text>
+<text x="55.0" y="575.0" fill="#8993a4" font-size="12" font-family="system-ui, sans-serif">tokens/s</text>
+<text x="590.0" y="115.0" fill="#f8fafc" font-size="18" font-family="system-ui, sans-serif" font-weight="600">Mean time to first token (C1)</text>
+<line x1="590" y1="520.0" x2="1065" y2="520.0" stroke="#2b3548"/>
+<text x="582.0" y="525.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">0.0</text>
+<line x1="590" y1="422.5" x2="1065" y2="422.5" stroke="#2b3548"/>
+<text x="582.0" y="427.5" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">10.2</text>
+<line x1="590" y1="325.0" x2="1065" y2="325.0" stroke="#2b3548"/>
+<text x="582.0" y="330.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">20.4</text>
+<line x1="590" y1="227.5" x2="1065" y2="227.5" stroke="#2b3548"/>
+<text x="582.0" y="232.5" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">30.6</text>
+<line x1="590" y1="130.0" x2="1065" y2="130.0" stroke="#2b3548"/>
+<text x="582.0" y="135.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">40.8</text>
+<text x="669.2" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">10K</text>
+<rect x="618.2" y="498.5" width="48.0" height="21.5" rx="5" fill="#65d6ad"/>
+<text x="642.2" y="491.5" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">2.3</text>
+<rect x="672.2" y="516.7" width="48.0" height="3.3" rx="5" fill="#7aa2f7"/>
+<text x="696.2" y="509.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
+<text x="827.5" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">200K</text>
+<rect x="776.5" y="180.9" width="48.0" height="339.1" rx="5" fill="#65d6ad"/>
+<text x="800.5" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.5</text>
+<rect x="830.5" y="194.7" width="48.0" height="325.3" rx="5" fill="#7aa2f7"/>
+<text x="854.5" y="187.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">34.1</text>
+<text x="985.8" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">300K</text>
+<rect x="934.8" y="307.4" width="48.0" height="212.6" rx="5" fill="#65d6ad"/>
+<text x="958.8" y="300.4" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.3</text>
+<rect x="988.8" y="309.8" width="48.0" height="210.2" rx="5" fill="#7aa2f7"/>
+<text x="1012.8" y="302.8" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.0</text>
+<text x="590.0" y="575.0" fill="#8993a4" font-size="12" font-family="system-ui, sans-serif">seconds</text>
+<rect x="55" y="605" width="16" height="16" rx="3" fill="#65d6ad"/>
+<text x="79.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">fast</text>
+<rect x="155" y="605" width="16" height="16" rx="3" fill="#7aa2f7"/>
+<text x="179.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">agent</text>
 </svg>

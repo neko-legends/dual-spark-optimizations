@@ -32,7 +32,7 @@ docker save "$DSPARK_VLLM_IMAGE" | ssh "$WORKER_SSH" docker load
 
 docker run --rm --entrypoint /opt/env/bin/python "$DSPARK_VLLM_IMAGE" \
   -c "import vllm.v1.spec_decode.dspark; print('Forge runtime imports OK')"
-ssh "$WORKER_SSH" docker run --rm --entrypoint /opt/env/bin/python "$DSPARK_VLLM_IMAGE" \
-  -c "import vllm.v1.spec_decode.dspark; print('Anvil runtime imports OK')"
+ssh "$WORKER_SSH" \
+  "docker run --rm --entrypoint /opt/env/bin/python '$DSPARK_VLLM_IMAGE' -c \"import vllm.v1.spec_decode.dspark; print('Anvil runtime imports OK')\""
 
 echo "Runtime profile '$PROFILE' is present on both nodes."

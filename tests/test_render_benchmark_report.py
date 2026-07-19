@@ -44,9 +44,25 @@ class RenderBenchmarkReportTests(unittest.TestCase):
         self.assertIn("61.2", svg)
         self.assertIn("61.25", markdown)
         self.assertIn("abc123", markdown)
+        agent_result = reporter.Result(
+            profile="agent",
+            prompt="10K",
+            concurrency=4,
+            decode_tps=20.0,
+            aggregate_tps=80.0,
+            ttft=3.0,
+            requests=12,
+            model_revision="abc123",
+            source="agent/result.json",
+        )
+        self.assertIn(
+            "Agent profile concurrency scaling",
+            reporter.render_concurrency_svg([agent_result]),
+        )
 
     def test_placeholder_is_honest(self):
         self.assertIn("Benchmarks pending", reporter.render_svg([]))
+        self.assertIn("Benchmarks pending", reporter.render_concurrency_svg([]))
         self.assertIn("No local benchmark results", reporter.render_markdown([], "now"))
 
 

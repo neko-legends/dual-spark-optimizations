@@ -14,9 +14,11 @@ This project tests a deliberate “best of both worlds” combination:
 - a download-once workflow: Forge downloads the ~155 GiB gated snapshot and
   transfers it directly to Anvil over the CX-7 link.
 
-No hybrid performance number is claimed yet. Upstream results were measured
-with different weights or runtime profiles. Use `scripts/benchmark.py` on the
-actual deployment before publishing a number.
+The hybrid has now been measured on Forge and Anvil with the pinned v1.1 model.
+Fast C1 decode ranged from 36.79 tok/s at 10K to 57.29 tok/s at 300K. Agent C4
+aggregate throughput ranged from 60.10 to 82.37 tok/s. These local results are
+not directly comparable to upstream numbers collected with other weights,
+prompts, output lengths, or runtime builds.
 
 The compatibility boundary and benchmark hypothesis are detailed in
 [`docs/DESIGN.md`](docs/DESIGN.md).
@@ -34,6 +36,14 @@ username on both systems; here that user is `jun`.
 Tailscale is for remote management. Model transfer and NCCL traffic stay on the
 direct CX-7 link.
 
+The live link reports 200,000 Mb/s full duplex. The validation run measured
+95.35 Gb/s forward and 90.36 Gb/s reverse with TCP/iperf3, plus 108.98 Gb/s
+with RDMA writes. See [`results/FABRIC.md`](results/FABRIC.md) and its linked
+raw evidence.
+The one-time encrypted rsync/SSH model copy also used this interface, as forced
+by its `10.100.10.2` destination; it copied 173,766,905,451 bytes in 536 seconds
+(0.302 GiB/s). That application-level rate is not the cable's capacity.
+
 ## Profiles
 
 | Profile | Runtime | Context | Sequences | KV cache | Purpose |
@@ -49,6 +59,34 @@ Tony reported a 62.48 tok/s mean on the stock model with his single-stream
 profile. drowzeys reported about 50 tok/s C1 and 113 tok/s aggregate C4 with
 v1.1 and stage-c. Those are upstream reference points, not results from this
 repository.
+
+## Measured results
+
+All cases use the same pinned v1.1 weights and 256-token output cap. C1 is three
+sequential requests. C4 is three groups of four simultaneous requests. Because
+the runtime reported prefix-cache hits for repeated identical prompts, TTFT
+includes a full-prefill first request and cache-assisted repeats; decode and
+aggregate throughput are the primary comparison metrics.
+
+| Profile | Prompt | C1 decode tok/s | C1 aggregate tok/s | C4 aggregate tok/s |
+| --- | ---: | ---: | ---: | ---: |
+| `fast` | 10K | 36.79 | 30.86 | — |
+| `fast` | 200K | 49.88 | 24.52 | — |
+| `fast` | 300K | 57.29 | 31.07 | — |
+| `agent` | 10K | 35.30 | 33.78 | 60.10 |
+| `agent` | 200K | 36.94 | 22.94 | 64.70 |
+| `agent` | 300K | 53.77 | 31.50 | 82.37 |
+
+The current default remains `fast` for single-stream long-context decode. Use
+`agent` when four-way concurrency, the full 1M context configuration, or the
+drowzeys stage-c behavior is the priority.
+
+![Dual-Spark benchmark comparison](results/benchmark-comparison.svg)
+
+![Agent concurrency scaling](results/agent-concurrency.svg)
+
+The complete table, TTFT values, exact model revision, and linked raw JSON are
+in [`results/BENCHMARKS.md`](results/BENCHMARKS.md).
 
 ## Prerequisites
 
@@ -206,14 +244,10 @@ After both profiles have been measured, render the tracked summary and chart:
 python3 scripts/render-benchmark-report.py
 ```
 
-Raw benchmark captures remain ignored; only the reproducible summary and chart
-belong in Git. The chart below is deliberately marked pending until Forge and
-Anvil produce local data. It must never be populated with upstream numbers.
-
-![Dual-Spark benchmark comparison](results/benchmark-comparison.svg)
-
-See the exact table and provenance in
-[`results/BENCHMARKS.md`](results/BENCHMARKS.md).
+Full transient captures remain ignored. Curated reports, telemetry, image
+metadata, speculative metric deltas, the reproducible summary, and the chart
+are checked in under `results/`; prompt text is not duplicated in those raw
+artifacts.
 
 The complete implementation and release gate is tracked in
 [`TODO.md`](TODO.md); agents should update it as evidence is collected.

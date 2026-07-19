@@ -101,7 +101,7 @@ def render_svg(results: Iterable[Result]) -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="18" fill="#111827"/>',
         _svg_text(55, 55, "Dual-Spark measured benchmark comparison", fill="#f8fafc", font_size=27, font_family="system-ui, sans-serif", font_weight="700"),
-        _svg_text(55, 82, "Same v1.1 weights · deterministic shared prompts · lower TTFT is better", fill="#a7b0c0", font_size=14, font_family="system-ui, sans-serif"),
+        _svg_text(55, 82, "Same v1.1 weights · TTFT includes first full prefill plus cache-assisted repeats", fill="#a7b0c0", font_size=14, font_family="system-ui, sans-serif"),
     ]
     for index, (title, unit, getter) in enumerate(panels):
         panel_x = 55 + index * 535
@@ -143,6 +143,51 @@ def render_svg(results: Iterable[Result]) -> str:
     return "\n".join(output) + "\n"
 
 
+def render_concurrency_svg(results: Iterable[Result]) -> str:
+    rows = [row for row in results if row.profile == "agent" and row.concurrency in (1, 4)]
+    width, height = 1120, 470
+    if not rows:
+        return render_svg([]).replace('height="360"', 'height="470"').replace(
+            'viewBox="0 0 1120 360"', 'viewBox="0 0 1120 470"'
+        )
+    output = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+        '<rect width="100%" height="100%" rx="18" fill="#111827"/>',
+        _svg_text(55, 55, "Agent profile concurrency scaling", fill="#f8fafc", font_size=27, font_family="system-ui, sans-serif", font_weight="700"),
+        _svg_text(55, 82, "Mean aggregate completion throughput · three groups per prompt size", fill="#a7b0c0", font_size=14, font_family="system-ui, sans-serif"),
+    ]
+    chart_x, chart_y, chart_w, chart_h = 80, 115, 980, 265
+    maximum = max(row.aggregate_tps for row in rows) * 1.15
+    for tick in range(5):
+        value = maximum * tick / 4
+        y = chart_y + chart_h - chart_h * tick / 4
+        output.append(f'<line x1="{chart_x}" y1="{y:.1f}" x2="{chart_x + chart_w}" y2="{y:.1f}" stroke="#2b3548"/>')
+        output.append(_svg_text(chart_x - 10, y + 5, f"{value:.1f}", fill="#8993a4", font_size=12, text_anchor="end", font_family="system-ui, sans-serif"))
+    prompts = sorted({row.prompt for row in rows}, key=lambda item: PROMPT_ORDER.get(item, 99))
+    colors = {1: "#7aa2f7", 4: "#f59e0b"}
+    group_w, bar_w = chart_w / len(prompts), 76
+    for prompt_index, prompt in enumerate(prompts):
+        center = chart_x + group_w * (prompt_index + 0.5)
+        output.append(_svg_text(center, chart_y + chart_h + 27, prompt, fill="#d8dee9", font_size=14, text_anchor="middle", font_family="system-ui, sans-serif"))
+        for concurrency_index, concurrency in enumerate((1, 4)):
+            matches = [row for row in rows if row.prompt == prompt and row.concurrency == concurrency]
+            if not matches:
+                continue
+            value = matches[-1].aggregate_tps
+            x = center + (concurrency_index - 0.5) * (bar_w + 12) - bar_w / 2
+            bar_h = chart_h * value / maximum
+            y = chart_y + chart_h - bar_h
+            output.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w}" height="{bar_h:.1f}" rx="6" fill="{colors[concurrency]}"/>')
+            output.append(_svg_text(x + bar_w / 2, y - 7, f"{value:.1f}", fill="#f8fafc", font_size=12, text_anchor="middle", font_family="system-ui, sans-serif"))
+    legend_x = 80
+    for concurrency in (1, 4):
+        output.append(f'<rect x="{legend_x}" y="430" width="16" height="16" rx="3" fill="{colors[concurrency]}"/>')
+        output.append(_svg_text(legend_x + 24, 443, f"C{concurrency} aggregate tok/s", fill="#d8dee9", font_size=13, font_family="system-ui, sans-serif"))
+        legend_x += 190
+    output.append("</svg>")
+    return "\n".join(output) + "\n"
+
+
 def render_markdown(results: list[Result], generated_at: str) -> str:
     if not results:
         return f"""# Measured benchmarks
@@ -162,6 +207,11 @@ Generated: {generated_at}
         "# Measured benchmarks",
         "",
         "These are local measurements from this repository's harness, not upstream claims.",
+        "Each case uses a 256-token output cap. C1 contains three sequential requests;",
+        "C4 contains three groups of four simultaneous requests (12 total). Repeated",
+        "identical prompts can benefit from the runtime's observed prefix caching, so",
+        "TTFT combines the first full prefill with subsequent cache-assisted requests.",
+        "Decode tok/s is the per-request mean; aggregate tok/s is the group throughput.",
         "",
         "| Profile | Prompt | C | Requests | Decode tok/s | Aggregate tok/s | Mean TTFT (s) | Model revision | Source |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
@@ -170,7 +220,7 @@ Generated: {generated_at}
         lines.append(
             f"| `{row.profile}` | {row.prompt} | {row.concurrency} | {row.requests} | "
             f"{row.decode_tps:.2f} | {row.aggregate_tps:.2f} | {row.ttft:.2f} | "
-            f"`{row.model_revision}` | `{row.source}` |"
+            f"`{row.model_revision}` | [`{row.source}`](raw/{row.source}) |"
         )
     lines.extend(["", f"Generated: {generated_at}", ""])
     return "\n".join(lines)
@@ -189,6 +239,9 @@ def main() -> None:
     generated_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
     (args.output_dir / "benchmark-comparison.svg").write_text(
         render_svg(results), encoding="utf-8"
+    )
+    (args.output_dir / "agent-concurrency.svg").write_text(
+        render_concurrency_svg(results), encoding="utf-8"
     )
     (args.output_dir / "BENCHMARKS.md").write_text(
         render_markdown(results, generated_at), encoding="utf-8"
