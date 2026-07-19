@@ -13,18 +13,27 @@ model substituted for benchmark speed. It also ports drowzeys' ragged-batch
 and stable DSpark KV-slot work into Tony's fast overlay, making the combined
 runtime genuinely C4-capable instead of merely queueing four requests.
 
+**Measured conclusion:** use `PROFILE=adaptive` as the one-server default. It
+automatically preserves the single-request hot path and switches to safe C4
+batching as requests overlap; agents keep using the normal OpenAI-compatible
+API with no skill, flag, or model reload.
+
+![Adaptive profile: near-specialist C1 speed and best measured C4 throughput](results/adaptive-performance.svg)
+
 Every profile uses the same uncensored v1.1 weights, tool parser, and reasoning
 parser. Pick the serving profile for the workload:
 
 | Workload | Use | Measured reason |
 | --- | --- | --- |
-| One active request / coding agent | `PROFILE=fast` | Fastest C1 decode at 10K, 200K, and 300K |
-| Four active requests near 10K | `PROFILE=fast-c4` | 69.40 aggregate tok/s vs 60.10 for stage-c |
-| Four active requests near 200K–300K, or full 1M configuration | `PROFILE=long-c4` | Stage-c was 2–3% faster in the measured long-context C4 cases |
+| General use: one to four active requests | `PROFILE=adaptive` | Within 1.6–8.8% of the C1 specialist and fastest measured C4 at every tested context |
+| Dedicated single-request service | `PROFILE=fast` | Fastest C1 decode at 10K, 200K, and 300K |
+| Full 1M configuration | `PROFILE=long-c4` | Retains the stage-c 1,048,576-token configuration |
 
 There is deliberately no profile named `agent`: a runtime profile does not
-make the model more agentic. Most individual AI coding agents should start with
-`fast`; multi-agent servers should choose by expected concurrent context size.
+make the model more agentic. Most users and AI-agent servers should start with
+`adaptive`. No client skill or request flag is needed—the server selects Tony's
+row-zero hot path for a lone request and stable-slot batching when requests
+overlap.
 
 The model used by every profile is
 [`drowzeys/DeepSeek-V4-Flash-DSpark-Abliterated-Uncensored-v1.1-alpha-Mida-Brikie`](https://huggingface.co/drowzeys/DeepSeek-V4-Flash-DSpark-Abliterated-Uncensored-v1.1-alpha-Mida-Brikie)
@@ -41,9 +50,9 @@ This project tests a deliberate “best of both worlds” combination:
   snapshot and transfers it directly to the worker over the CX-7 link.
 
 The hybrid has now been measured on a two-Spark cluster with the pinned v1.1
-model. Fast C1 decode ranged from 35.64 tok/s at 10K to 56.21 tok/s at 300K.
-The combined fast C4 runtime reached 69.40 tok/s at 10K, while stage-c retained
-a small lead at 200K and 300K. These local results are
+model. Adaptive C1 decode ranged from 34.54 tok/s at 10K to 55.32 tok/s at
+300K, while adaptive C4 aggregate throughput ranged from 75.44 to 87.10 tok/s.
+These local results are
 not directly comparable to upstream numbers collected with other weights,
 prompts, output lengths, or runtime builds.
 
@@ -68,13 +77,14 @@ by its `10.100.10.2` destination; it copied 173,766,905,451 bytes in 536 seconds
 
 | Profile | Runtime | Context | Sequences | KV cache | Purpose |
 | --- | --- | ---: | ---: | --- | --- |
-| `fast` | Tony-derived overlay | 900,000 | 1 | `fp8` | **Recommended:** fastest measured C1 decode with the uncensored model |
-| `fast-c4` | Tony overlay + drowzeys concurrency port | 900,000 | 4 | `fp8` | Fastest measured short-context C4 |
-| `long-c4` | drowzeys stage-c | 1,048,576 | 4 | `nvfp4_ds_mla` | Fastest measured 200K/300K C4; full 1M configuration |
+| `adaptive` | Tony overlay + drowzeys concurrency port | 900,000 | 4 | `fp8` | **Recommended:** automatically optimizes one to four active requests |
+| `fast` | Tony-derived overlay | 900,000 | 1 | `fp8` | C1 specialist, especially when every tok/s matters at 200K |
+| `fast-c4` | Same as `adaptive` | 900,000 | 4 | `fp8` | Backward-compatible profile alias |
+| `long-c4` | drowzeys stage-c | 1,048,576 | 4 | `nvfp4_ds_mla` | Full 1M stage-c configuration |
 
 The stage-c `long-c4` profile follows drowzeys' privileged-container launch.
-The two Tony-derived profiles remain unprivileged. Users selecting `fast` or
-`fast-c4` do not need to pull/install the stage-c runtime.
+The Tony-derived profiles remain unprivileged. Users selecting `adaptive`,
+`fast`, or the compatibility alias `fast-c4` do not pull/install stage-c.
 
 Tony reported a 62.48 tok/s mean on the stock model with his single-stream
 profile. drowzeys reported about 50 tok/s C1 and 113 tok/s aggregate C4 with
@@ -88,29 +98,34 @@ sequential requests. C4 is three groups of four simultaneous requests. Because
 the runtime reported prefix-cache hits for repeated identical prompts, TTFT
 includes a full-prefill first request and cache-assisted repeats; decode and
 aggregate throughput are the primary comparison metrics.
+The `fast-c4` rows preserve the pre-adaptive combined-image baseline; the
+current `fast-c4` profile file is a compatibility alias for `adaptive`.
 
 | Profile | Prompt | C1 decode tok/s | C1 aggregate tok/s | C4 aggregate tok/s |
 | --- | ---: | ---: | ---: | ---: |
+| `adaptive` | 10K | 34.54 | 33.30 | **75.44** |
+| `adaptive` | 200K | 47.87 | 30.09 | **83.24** |
+| `adaptive` | 300K | 55.32 | 32.60 | **87.10** |
 | `fast` | 10K | 35.64 | 29.76 | — |
 | `fast` | 200K | 52.47 | 33.93 | — |
 | `fast` | 300K | 56.21 | 33.14 | — |
-| `fast-c4` | 10K | 35.20 | 33.75 | **69.40** |
+| `fast-c4` | 10K | 35.20 | 33.75 | 69.40 |
 | `fast-c4` | 200K | 36.20 | 22.45 | 63.31 |
 | `fast-c4` | 300K | 51.59 | 30.70 | 79.67 |
 | `long-c4` | 10K | 35.30 | 33.78 | 60.10 |
-| `long-c4` | 200K | 36.94 | 22.94 | **64.70** |
-| `long-c4` | 300K | 53.77 | 31.50 | **82.37** |
+| `long-c4` | 200K | 36.94 | 22.94 | 64.70 |
+| `long-c4` | 300K | 53.77 | 31.50 | 82.37 |
 
-`fast` remains the default for one active request. `fast-c4` is the combined
-runtime for short concurrent work. `long-c4` remains available because the
-measurements do not support abandoning it for long-context concurrency.
+`adaptive` is the default. Relative to the dedicated `fast` C1 profile, it gave
+up 3.1% at 10K, 8.8% at 200K, and 1.6% at 300K. In return, the same running
+server delivered the best measured C4 result at all three prompt sizes. Keep
+`fast` only for a deliberately single-request deployment and `long-c4` when
+the full 1M stage-c configuration is required.
 
-![Dual-Spark benchmark comparison](results/benchmark-comparison.svg)
-
-![C1 and C4 runtime comparison](results/concurrency-comparison.svg)
-
-The complete table, TTFT values, exact model revision, and linked raw JSON are
-in [`results/BENCHMARKS.md`](results/BENCHMARKS.md).
+The complete table, TTFT values, exact model revision, linked raw JSON, and
+additional [C1/TTFT](results/benchmark-comparison.svg) and
+[specialist](results/concurrency-comparison.svg) views are in
+[`results/BENCHMARKS.md`](results/BENCHMARKS.md).
 
 ## Prerequisites
 
@@ -249,13 +264,13 @@ end-to-end tok/s, server-returned token counts, runtime image metadata, and
 before/after Prometheus metrics. The fixtures and checksums are documented in
 [`benchmarks/prompts/README.md`](benchmarks/prompts/README.md).
 
-For either C4 profile's full matrix:
+For any C4-capable profile's full matrix:
 
 ```bash
 BENCHMARK_RUNS=3 FULL_CONCURRENCY=1 ./scripts/run-benchmark-suite.sh
 ```
 
-Change `PROFILE` to `fast`, `fast-c4`, or `long-c4` in `.env`, rerun
+Change `PROFILE` to `adaptive`, `fast`, or `long-c4` in `.env`, rerun
 `scripts/prepare-runtime.sh` and `scripts/start.sh`, then repeat the same
 benchmark. Record prompt shape, output length, context occupancy, concurrency,
 runtime image digest, and model revision with every published result.

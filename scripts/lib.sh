@@ -18,7 +18,7 @@ load_config() {
   set -a
   # shellcheck disable=SC1090
   source "$ENV_FILE"
-  PROFILE="${PROFILE:-fast}"
+  PROFILE="${PROFILE:-adaptive}"
   PROFILE_FILE="$ROOT_DIR/profiles/$PROFILE.env"
   [ -f "$PROFILE_FILE" ] || die "unknown profile '$PROFILE' ($PROFILE_FILE not found)"
   # shellcheck disable=SC1090

@@ -35,5 +35,10 @@ grep -Fq 'dspark_propose_kwargs' \
   echo "Missing DSpark request-ID forwarding" >&2
   exit 1
 }
+grep -Fq '_draft_single_sequence_fast_path' \
+  "$CONTEXT_DIR/vllm/v1/spec_decode/dspark_proposer.py" || {
+  echo "Missing DSpark live-batch adaptive dispatch" >&2
+  exit 1
+}
 
 echo "Overlay source check passed for $DOCKERFILE"

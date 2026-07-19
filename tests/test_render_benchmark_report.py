@@ -56,13 +56,43 @@ class RenderBenchmarkReportTests(unittest.TestCase):
             source="long-c4/result.json",
         )
         self.assertIn(
-            "C1 and C4 runtime comparison",
+            "Adaptive vs specialist profiles",
             reporter.render_concurrency_svg([stage_c_result]),
         )
+        adaptive_rows = []
+        for prompt, fast_c1, adaptive_c1, prior_c4, adaptive_c4 in (
+            ("10K", 35.64, 34.54, 69.40, 75.44),
+            ("200K", 52.47, 47.87, 64.70, 83.24),
+            ("300K", 56.21, 55.32, 82.37, 87.10),
+        ):
+            for profile, concurrency, decode, aggregate in (
+                ("fast", 1, fast_c1, fast_c1),
+                ("adaptive", 1, adaptive_c1, adaptive_c1),
+                ("fast-c4", 4, prior_c4 / 4, prior_c4),
+                ("adaptive", 4, adaptive_c4 / 4, adaptive_c4),
+            ):
+                adaptive_rows.append(
+                    reporter.Result(
+                        profile=profile,
+                        prompt=prompt,
+                        concurrency=concurrency,
+                        decode_tps=decode,
+                        aggregate_tps=aggregate,
+                        ttft=1.0,
+                        requests=3 if concurrency == 1 else 12,
+                        model_revision="abc123",
+                        source=f"{profile}/{prompt}-c{concurrency}.json",
+                    )
+                )
+        adaptive_svg = reporter.render_adaptive_svg(adaptive_rows)
+        self.assertIn("One runtime. Fast alone. Faster together.", adaptive_svg)
+        self.assertIn("adaptive  87.10", adaptive_svg)
+        self.assertIn("No agent skill", adaptive_svg)
 
     def test_placeholder_is_honest(self):
         self.assertIn("Benchmarks pending", reporter.render_svg([]))
         self.assertIn("Benchmarks pending", reporter.render_concurrency_svg([]))
+        self.assertIn("Benchmarks pending", reporter.render_adaptive_svg([]))
         self.assertIn("No local benchmark results", reporter.render_markdown([], "now"))
 
 

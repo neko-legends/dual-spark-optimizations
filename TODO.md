@@ -197,9 +197,11 @@ only after recording evidence in the repository or the final deployment notes.
 - [x] Confirm configured 900K/1M contexts accept the 300K fixture.
 - [x] Confirm model transfer routes over CX-7, not LAN or Tailscale.
 - [ ] Reject configurations that corrupt tool calling or produce garble.
-- [x] Keep `fast` as the C1 default based on measured long-context decode.
-- [x] Use `fast-c4` for measured short-context C4.
-- [x] Keep `long-c4` for measured long-context C4 and full-context operation.
+- [x] Add live-batch adaptive dispatch between Tony's C1 hot path and stable-slot C4.
+- [x] Benchmark `adaptive` at matched C1/C4 10K, 200K, and 300K cases.
+- [x] Make `adaptive` the default based on its measured C1/C4 balance.
+- [x] Keep `fast` as the dedicated C1 specialist.
+- [x] Keep `long-c4` for full-context stage-c operation.
 - [x] Document the measured profile boundary and avoid combining unsupported KV modes.
 
 ## 12. Documentation and release

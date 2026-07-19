@@ -22,8 +22,9 @@ Tony's pinned overlay advertises `fp8` / `fp8_ds_mla`; it does not advertise
 `nvfp4_ds_mla`. Drowzeys' stage-c image supplies the latter. Consequently:
 
 - `fast` uses the Tony-derived image, `fp8`, C1, and 900K;
-- `fast-c4` adds drowzeys' ragged-batch and stable-KV-slot concurrency changes
-  to that runtime and permits four live sequences;
+- `adaptive` adds drowzeys' ragged-batch and stable-KV-slot concurrency changes
+  while preserving Tony's original row-zero path whenever the live batch is a
+  single request; `fast-c4` is a compatibility alias;
 - `long-c4` is drowzeys stage-c with `nvfp4_ds_mla`, C4, and 1M context.
 
 Putting `nvfp4_ds_mla` into the Tony-derived image without a source audit would
@@ -62,6 +63,8 @@ shapes and record:
 - thermal/power stability;
 - usable context, protocol/tool behavior, and output quality.
 
-The measurements select `fast` for C1, `fast-c4` for short-context C4, and
-`long-c4` for the tested 200K/300K C4 cases. Tool/agent behavior is shared;
-the profiles change runtime, cache, concurrency, and context capacity.
+The measurements select `adaptive` as the general-purpose default: it remained
+within 1.6–8.8% of `fast` at C1 and produced the highest C4 aggregate throughput
+at 10K, 200K, and 300K. `fast` remains the single-request specialist, while
+`long-c4` remains for the full 1M stage-c configuration. Tool/agent behavior is
+shared; the profiles change runtime, cache, concurrency, and context capacity.

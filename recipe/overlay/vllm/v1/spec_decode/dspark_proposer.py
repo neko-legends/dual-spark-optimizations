@@ -60,6 +60,7 @@ class DSparkProposer(SpecDecodeBaseProposer):
         self._runner = runner
         self._draft_graph_runner: CUDAGraphWrapper | None = None
         self._draft_graph_batch_size = 0
+        self._draft_single_sequence_fast_path = False
         self._draft_input_ids_buffer = torch.zeros(
             self.max_batch_size,
             dtype=torch.long,
@@ -476,6 +477,14 @@ class DSparkProposer(SpecDecodeBaseProposer):
     ) -> None:
         batch_size = input_ids.shape[0]
         self._draft_graph_batch_size = padded_batch_size
+        # Select by the live request batch, not the configured maximum. An
+        # identity slot means the sole request owns Tony's original row-zero
+        # cache layout and can avoid the multi-request gather/scatter path.
+        # A lone request left in a nonzero stable slot must keep using the
+        # concurrent path until it completes.
+        self._draft_single_sequence_fast_path = (
+            batch_size == 1 and slot_index is None
+        )
         self._draft_input_ids_buffer[:batch_size].copy_(input_ids.to(torch.long))
         self._draft_hidden_buffer[:batch_size].copy_(hidden_states.to(self.dtype))
         self._draft_positions_buffer[:batch_size].copy_(positions.to(torch.long))
@@ -496,12 +505,12 @@ class DSparkProposer(SpecDecodeBaseProposer):
         self,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         batch_size = self._draft_graph_batch_size
-        # Preserve Tony's original single-sequence path exactly. Multi-sequence
-        # deployments need stable slots as scheduler rows condense; a profile
-        # whose maximum batch is one always owns slot zero.
+        # Adapt automatically to the live batch. Multi-sequence requests need
+        # stable slots as scheduler rows condense, while a sole row-zero request
+        # can preserve Tony's original single-sequence path exactly.
         slot_index = (
             None
-            if self.max_batch_size == 1
+            if self._draft_single_sequence_fast_path
             else self._draft_slot_index_buffer[:batch_size]
         )
         return self.model.draft_with_confidence(

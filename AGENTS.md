@@ -52,12 +52,13 @@ that a configuration reaches an upstream tok/s figure until measured here.
 
 - All profiles use the same uncensored v1.1 weights, tool parser, and reasoning
   parser. A profile name does not change the model's agent behavior.
-- `fast` uses the Tony-derived overlay and `fp8` for measured C1 performance.
-- `fast-c4` combines Tony's fast path with drowzeys' ragged-batch/stable-slot
-  concurrency port. It is the measured short-context C4 choice.
-- `long-c4` is drowzeys stage-c and is the measured 200K/300K C4 choice. It is
-  a serving tradeoff, not a statement about AI-agent capability.
-- Never recommend one profile universally: use `fast` for C1, `fast-c4` for
-  short C4, and `long-c4` for measured long C4 or its full 1M configuration.
+- `adaptive` is the measured general-purpose default. It selects the original
+  Tony row-zero draft path for a lone live request and stable-slot/ragged-batch
+  handling when requests overlap; clients need no special behavior.
+- `fast` is the C1 specialist. Use it only when accepting no concurrent work is
+  worth its measured 1.6–8.8% C1 advantage over `adaptive`.
+- `fast-c4` is retained as a compatibility alias for `adaptive`.
+- `long-c4` is drowzeys stage-c. It remains useful for the full 1M
+  configuration, not as the measured default or a claim about agent ability.
 - Do not set `nvfp4_ds_mla` on the Tony-derived image unless a source audit and
   runtime test prove support.

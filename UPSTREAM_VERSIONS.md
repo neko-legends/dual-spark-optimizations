@@ -21,6 +21,8 @@ the measured Tony+C4 image ID was
 `sha256:830c4f7c30f57ac8692676a502087c8589ef4228580b195be76656141470f799`;
 the final C1-preserving combined overlay image ID was
 `sha256:e8df377b28db3bde399d0829ff35cb59ffee6071a953d8ab3b425da65546c4f5`;
+the measured live-batch adaptive overlay image ID was
+`sha256:1e7f77755b53dd713b192dcacb9d60df680bbcbf68932c1e82bc3d35d6295ffb`;
 the measured stage-c image ID was
 `sha256:76532c4cc261afe7a7cad1d9731cd5123d0e14219c9a1d35a0ef6163fe67c5d4`.
 The resolved registry digests above make the mutable tags auditable.

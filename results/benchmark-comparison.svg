@@ -14,26 +14,32 @@
 <line x1="55" y1="130.0" x2="530" y2="130.0" stroke="#2b3548"/>
 <text x="47.0" y="135.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">64.6</text>
 <text x="134.2" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">10K</text>
-<rect x="68.8" y="305.0" width="39.6" height="215.0" rx="5" fill="#65d6ad"/>
-<text x="88.6" y="298.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.6</text>
-<rect x="114.4" y="307.7" width="39.6" height="212.3" rx="5" fill="#f59e0b"/>
-<text x="134.2" y="300.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.2</text>
-<rect x="160.0" y="307.0" width="39.6" height="213.0" rx="5" fill="#7aa2f7"/>
-<text x="179.8" y="300.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.3</text>
+<rect x="61.8" y="311.6" width="31.7" height="208.4" rx="5" fill="#22d3ee"/>
+<text x="77.7" y="304.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">34.5</text>
+<rect x="99.5" y="305.0" width="31.7" height="215.0" rx="5" fill="#65d6ad"/>
+<text x="115.3" y="298.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.6</text>
+<rect x="137.2" y="307.7" width="31.7" height="212.3" rx="5" fill="#f59e0b"/>
+<text x="153.0" y="300.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.2</text>
+<rect x="174.8" y="307.0" width="31.7" height="213.0" rx="5" fill="#7aa2f7"/>
+<text x="190.7" y="300.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">35.3</text>
 <text x="292.5" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">200K</text>
-<rect x="227.1" y="203.4" width="39.6" height="316.6" rx="5" fill="#65d6ad"/>
-<text x="246.9" y="196.4" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">52.5</text>
-<rect x="272.7" y="301.6" width="39.6" height="218.4" rx="5" fill="#f59e0b"/>
-<text x="292.5" y="294.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.2</text>
-<rect x="318.3" y="297.1" width="39.6" height="222.9" rx="5" fill="#7aa2f7"/>
-<text x="338.1" y="290.1" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.9</text>
+<rect x="220.2" y="231.2" width="31.7" height="288.8" rx="5" fill="#22d3ee"/>
+<text x="236.0" y="224.2" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">47.9</text>
+<rect x="257.8" y="203.4" width="31.7" height="316.6" rx="5" fill="#65d6ad"/>
+<text x="273.7" y="196.4" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">52.5</text>
+<rect x="295.5" y="301.6" width="31.7" height="218.4" rx="5" fill="#f59e0b"/>
+<text x="311.3" y="294.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.2</text>
+<rect x="333.2" y="297.1" width="31.7" height="222.9" rx="5" fill="#7aa2f7"/>
+<text x="349.0" y="290.1" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">36.9</text>
 <text x="450.8" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">300K</text>
-<rect x="385.5" y="180.9" width="39.6" height="339.1" rx="5" fill="#65d6ad"/>
-<text x="405.3" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">56.2</text>
-<rect x="431.0" y="208.7" width="39.6" height="311.3" rx="5" fill="#f59e0b"/>
-<text x="450.8" y="201.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">51.6</text>
-<rect x="476.6" y="195.6" width="39.6" height="324.4" rx="5" fill="#7aa2f7"/>
-<text x="496.4" y="188.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">53.8</text>
+<rect x="378.5" y="186.2" width="31.7" height="333.8" rx="5" fill="#22d3ee"/>
+<text x="394.3" y="179.2" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">55.3</text>
+<rect x="416.2" y="180.9" width="31.7" height="339.1" rx="5" fill="#65d6ad"/>
+<text x="432.0" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">56.2</text>
+<rect x="453.8" y="208.7" width="31.7" height="311.3" rx="5" fill="#f59e0b"/>
+<text x="469.7" y="201.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">51.6</text>
+<rect x="491.5" y="195.6" width="31.7" height="324.4" rx="5" fill="#7aa2f7"/>
+<text x="507.3" y="188.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">53.8</text>
 <text x="55.0" y="575.0" fill="#8993a4" font-size="12" font-family="system-ui, sans-serif">tokens/s</text>
 <text x="590.0" y="115.0" fill="#f8fafc" font-size="18" font-family="system-ui, sans-serif" font-weight="600">Mean time to first token (C1)</text>
 <line x1="590" y1="520.0" x2="1065" y2="520.0" stroke="#2b3548"/>
@@ -47,31 +53,39 @@
 <line x1="590" y1="130.0" x2="1065" y2="130.0" stroke="#2b3548"/>
 <text x="582.0" y="135.0" fill="#8993a4" font-size="12" text-anchor="end" font-family="system-ui, sans-serif">39.2</text>
 <text x="669.2" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">10K</text>
-<rect x="603.8" y="499.8" width="39.6" height="20.2" rx="5" fill="#65d6ad"/>
-<text x="623.6" y="492.8" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">2.0</text>
-<rect x="649.4" y="516.6" width="39.6" height="3.4" rx="5" fill="#f59e0b"/>
-<text x="669.2" y="509.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
-<rect x="695.0" y="516.6" width="39.6" height="3.4" rx="5" fill="#7aa2f7"/>
-<text x="714.8" y="509.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
+<rect x="596.8" y="517.0" width="31.7" height="3.0" rx="5" fill="#22d3ee"/>
+<text x="612.7" y="510.0" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
+<rect x="634.5" y="499.8" width="31.7" height="20.2" rx="5" fill="#65d6ad"/>
+<text x="650.3" y="492.8" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">2.0</text>
+<rect x="672.2" y="516.6" width="31.7" height="3.4" rx="5" fill="#f59e0b"/>
+<text x="688.0" y="509.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
+<rect x="709.8" y="516.6" width="31.7" height="3.4" rx="5" fill="#7aa2f7"/>
+<text x="725.7" y="509.6" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">0.3</text>
 <text x="827.5" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">200K</text>
-<rect x="762.1" y="190.1" width="39.6" height="329.9" rx="5" fill="#65d6ad"/>
-<text x="781.9" y="183.1" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">33.1</text>
-<rect x="807.7" y="186.3" width="39.6" height="333.7" rx="5" fill="#f59e0b"/>
-<text x="827.5" y="179.3" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">33.5</text>
-<rect x="853.3" y="180.9" width="39.6" height="339.1" rx="5" fill="#7aa2f7"/>
-<text x="873.1" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">34.1</text>
+<rect x="755.2" y="182.2" width="31.7" height="337.8" rx="5" fill="#22d3ee"/>
+<text x="771.0" y="175.2" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">33.9</text>
+<rect x="792.8" y="190.1" width="31.7" height="329.9" rx="5" fill="#65d6ad"/>
+<text x="808.7" y="183.1" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">33.1</text>
+<rect x="830.5" y="186.3" width="31.7" height="333.7" rx="5" fill="#f59e0b"/>
+<text x="846.3" y="179.3" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">33.5</text>
+<rect x="868.2" y="180.9" width="31.7" height="339.1" rx="5" fill="#7aa2f7"/>
+<text x="884.0" y="173.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">34.1</text>
 <text x="985.8" y="547.0" fill="#d8dee9" font-size="13" text-anchor="middle" font-family="system-ui, sans-serif">300K</text>
-<rect x="920.5" y="302.5" width="39.6" height="217.5" rx="5" fill="#65d6ad"/>
-<text x="940.2" y="295.5" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">21.8</text>
-<rect x="966.0" y="300.7" width="39.6" height="219.3" rx="5" fill="#f59e0b"/>
-<text x="985.8" y="293.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.0</text>
-<rect x="1011.6" y="300.9" width="39.6" height="219.1" rx="5" fill="#7aa2f7"/>
-<text x="1031.4" y="293.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.0</text>
+<rect x="913.5" y="299.2" width="31.7" height="220.8" rx="5" fill="#22d3ee"/>
+<text x="929.3" y="292.2" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.2</text>
+<rect x="951.2" y="302.5" width="31.7" height="217.5" rx="5" fill="#65d6ad"/>
+<text x="967.0" y="295.5" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">21.8</text>
+<rect x="988.8" y="300.7" width="31.7" height="219.3" rx="5" fill="#f59e0b"/>
+<text x="1004.7" y="293.7" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.0</text>
+<rect x="1026.5" y="300.9" width="31.7" height="219.1" rx="5" fill="#7aa2f7"/>
+<text x="1042.3" y="293.9" fill="#f8fafc" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">22.0</text>
 <text x="590.0" y="575.0" fill="#8993a4" font-size="12" font-family="system-ui, sans-serif">seconds</text>
-<rect x="55" y="605" width="16" height="16" rx="3" fill="#65d6ad"/>
-<text x="79.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">Tony C1</text>
-<rect x="245" y="605" width="16" height="16" rx="3" fill="#f59e0b"/>
-<text x="269.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">Tony C4-capable</text>
-<rect x="435" y="605" width="16" height="16" rx="3" fill="#7aa2f7"/>
-<text x="459.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">stage-c long C4</text>
+<rect x="55" y="605" width="16" height="16" rx="3" fill="#22d3ee"/>
+<text x="79.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">Adaptive</text>
+<rect x="245" y="605" width="16" height="16" rx="3" fill="#65d6ad"/>
+<text x="269.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">Tony C1</text>
+<rect x="435" y="605" width="16" height="16" rx="3" fill="#f59e0b"/>
+<text x="459.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">Pre-adaptive C4</text>
+<rect x="625" y="605" width="16" height="16" rx="3" fill="#7aa2f7"/>
+<text x="649.0" y="618.0" fill="#d8dee9" font-size="13" font-family="system-ui, sans-serif">stage-c long C4</text>
 </svg>
